@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="continue_button">#090</color>
+    <color name="primary">#F44336</color>
+    <color name="primaryDark">#D32F2F</color>
+    <color name="accent">#40C4FF</color>
+
+    <!-- Android Palette Colors -->
+    <color name="palette_red">#F44336</color>
+    <color name="palette_pink">#F44336</color>
+    <color name="palette_purple">#9C27B0</color>
+    <color name="palette_deep_purple">#673AB7</color>
+    <color name="palette_indigo">#3F51B5</color>
+    <color name="palette_blue">#2196F3</color>
+    <color name="palette_light_blue">#03A9F4</color>
+    <color name="palette_cyan">#00BCD4</color>
+    <color name="palette_teal">#009688</color>
+    <color name="palette_green">#4CAF50</color>
+    <color name="palette_light_green">#8BC34A</color>
+    <color name="palette_yellow">#FFEB3B</color>
+    <color name="palette_amber">#FFC107</color>
+    <color name="palette_orange">#FF9800</color>
+    <color name="palette_deep_orange">#FF5722</color>
+    <color name="palette_brown">#795548</color>
+    <color name="palette_grey">#9E9E9E</color>
+    <color name="palette_blue_grey">#607D8B</color>
+
+
+
+    <color name="palette_red_dark">#C62828</color>
+    <color name="palette_pink_dark">#AD1457</color>
+    <color name="palette_purple_dark">#6A1B9A</color>
+    <color name="palette_deep_purple_dark">#4527A0</color>
+    <color name="palette_indigo_dark">#283593</color>
+    <color name="palette_blue_dark">#1565C0</color>
+    <color name="palette_light_blue_dark">#0277BD</color>
+    <color name="palette_cyan_dark">#00838F</color>
+    <color name="palette_teal_dark">#00695C</color>
+    <color name="palette_green_dark">#2E7D32</color>
+    <color name="palette_light_green_dark">#558B2F</color>
+    <color name="palette_yellow_dark">#F9A825</color>
+    <color name="palette_amber_dark">#FF8F00</color>
+    <color name="palette_orange_dark">#EF6C00</color>
+    <color name="palette_deep_orange_dark">#D84315</color>
+    <color name="palette_brown_dark">#4E342E</color>
+    <color name="palette_grey_dark">#424242</color>
+    <color name="palette_blue_grey_dark">#37474F</color>
+    <color name="service_name_background">#99111111</color>
+    <color name="transparent">#00000000</color>
+    <color name="user_address_in_map">#ffffff</color>
+    <color name="fab_map">#ffffff</color>
+    <color name="fab_summary">#F44336</color>
+    <color name="order_sent_text">#FFFFFF</color>
+    <color name="button_text_color">#fff</color>
+</resources>
