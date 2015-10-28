@@ -5,4 +5,7 @@
     <dimen name="elements_margin">15dp</dimen>
     <dimen name="elevation_fab">10dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="card_item_margin">10dp</dimen>
+    <dimen name="elements_margin_request_item">8dp</dimen>
+    <dimen name="card_item_padding">10dp</dimen>
 </resources>
