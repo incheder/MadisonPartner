@@ -6,8 +6,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.wezen.madisonpartner.R;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +31,8 @@ public class InformationFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private EditText editTextName;
+    private EditText editTextDescription;
 
 
     /**
@@ -60,7 +70,26 @@ public class InformationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_information, container, false);
+        View view = inflater.inflate(R.layout.fragment_information, container, false);
+        editTextName = (EditText)view.findViewById(R.id.editTextBusinessName);
+        editTextName = (EditText)view.findViewById(R.id.editTextBusinessDescription);
+        getBusinessOnformation();
+        return view;
+    }
+
+    private void getBusinessOnformation() {
+        ParseQuery<ParseObject> queryServices = ParseQuery.getQuery("HomeServices");
+        queryServices.whereEqualTo("serviceProvider", ParseUser.getCurrentUser());
+        queryServices.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if(e == null){
+                   // editTextName.setText();
+                }else {//ups
+
+                }
+            }
+        });
     }
 
 
