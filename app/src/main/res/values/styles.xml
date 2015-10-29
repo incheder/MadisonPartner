@@ -9,4 +9,11 @@
 
     </style>
 
+    <style name="ColorTextInputLayout" parent="@android:style/TextAppearance">
+        <!--<item name="android:textColor">#0f0</item>-->
+    </style>
+
+    <style name="AppTheme.Button" parent="Base.Widget.AppCompat.Button">
+    <item name="colorButtonNormal">@color/primaryDark</item>
+    </style>
 </resources>
