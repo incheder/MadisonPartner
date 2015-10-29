@@ -4,6 +4,9 @@ package com.wezen.madisonpartner.request;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -66,6 +69,7 @@ public class RequestListFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -120,7 +124,45 @@ public class RequestListFragment extends Fragment {
             }
         });
 
+    }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_request_filter, menu);
+    }
+
+    /*@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getActivity().getMenuInflater().inflate(R.menu.menu_request_filter, menu);
+        return true;
+    }*/
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        switch (id){
+            case R.id.all:
+                getList(null);
+                break;
+            case R.id.send:
+                getList(HomeServiceRequestStatus.ENVIADO);
+                break;
+            case R.id.asigned:
+                getList(HomeServiceRequestStatus.ASIGNADO);
+                break;
+            case R.id.done:
+                getList(HomeServiceRequestStatus.COMPLETO);
+                break;
+            case R.id.canceled:
+                getList(HomeServiceRequestStatus.CANCELADO);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 

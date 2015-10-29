@@ -1,0 +1,32 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.wezen.madison.history.HistoryActivity">
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_filter"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_filter_list_white_24dp">
+
+        <menu>
+
+            <item android:id="@+id/all"
+                android:title="@string/all" />
+
+            <item android:id="@+id/send"
+                android:title="@string/send" />
+
+            <item android:id="@+id/asigned"
+                android:title="@string/asigned" />
+
+            <item android:id="@+id/done"
+                android:title="@string/done" />
+
+            <item android:id="@+id/canceled"
+                android:title="@string/canceled" />
+
+        </menu>
+
+    </item>
+</menu>
