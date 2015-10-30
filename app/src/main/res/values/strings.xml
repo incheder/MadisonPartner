@@ -15,6 +15,7 @@
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="business_name">Nombre del negocio</string>
+    <string name="business_description">Descripcion del negocio</string>
     <string name="respond_request">Responder Solicitud</string>
     <string name="action_filter">Filtrar</string>
     <string name="all">Todos</string>
@@ -22,4 +23,5 @@
     <string name="asigned">Asignados</string>
     <string name="done">Completos</string>
     <string name="canceled">Cancelados</string>
+    <string name="choose_categories">Elegir Categorias</string>
 </resources>

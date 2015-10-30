@@ -14,6 +14,7 @@ import android.view.View;
 
 import com.wezen.madisonpartner.home.DummyFragment;
 import com.wezen.madisonpartner.home.ViewPagerAdapter;
+import com.wezen.madisonpartner.information.InformationFragment;
 import com.wezen.madisonpartner.request.RequestListFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFrag(RequestListFragment.newInstance("",""), getResources().getString(R.string.home_orders));
-        adapter.addFrag(new DummyFragment(), getResources().getString(R.string.home_info));
+        adapter.addFrag(InformationFragment.newInstance("",""), getResources().getString(R.string.home_info));
 
         viewPager.setAdapter(adapter);
     }

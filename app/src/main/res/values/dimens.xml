@@ -9,5 +9,6 @@
     <dimen name="elements_margin_request_item">8dp</dimen>
     <dimen name="card_item_padding">10dp</dimen>
     <dimen name="column_width">250dp</dimen>
+    <dimen name="bottomsheet_elements_margin">5dp</dimen>
 
 </resources>
