@@ -257,10 +257,16 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             public void done(ParseUser parseUser, ParseException e) {
                 // mProgressView.setVisibility(View.GONE);
                 showProgress(false);
-                if (parseUser != null) {//no problemo
+                if(parseUser != null && parseUser.getInt("userType") == 2){//no problemo
                     goToCategories();
-                } else {//ups!
-                    Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                } else if(parseUser != null){//ups!
+                    ParseUser.logOut();
+                    Toast.makeText(LoginActivity.this, R.string.wrong_credentials, Toast.LENGTH_SHORT).show();
+                } else {
+                    if(e!= null){
+                        Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+
                 }
             }
         });

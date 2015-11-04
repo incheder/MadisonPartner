@@ -24,4 +24,5 @@
     <string name="done">Completos</string>
     <string name="canceled">Cancelados</string>
     <string name="choose_categories">Elegir Categorias</string>
+    <string name="wrong_credentials">Datos incorrectos</string>
 </resources>

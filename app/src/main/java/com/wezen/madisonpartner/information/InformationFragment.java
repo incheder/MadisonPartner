@@ -5,13 +5,12 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.flipboard.bottomsheet.BottomSheetLayout;
 import com.parse.FindCallback;
@@ -21,9 +20,9 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.wezen.madisonpartner.R;
-import com.wezen.madisonpartner.information.bottomsheet.BottomSheetCategoriesAdapter;
+import com.wezen.madisonpartner.information.bottomsheet.CategoriesAdapter;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,6 +41,12 @@ public class InformationFragment extends Fragment {
     private String mParam2;
     private EditText editTextName;
     private EditText editTextDescription;
+    private LinearLayoutManager layoutManager;
+    private Button buttonCategories;
+    private BottomSheetLayout bottomSheet;
+    private List<Category> availableCategories;
+    private List<Category> currentCategories;
+    private  RecyclerView rvCategories;
 
 
     /**
@@ -80,45 +85,105 @@ public class InformationFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_information, container, false);
-        final BottomSheetLayout bottomSheet = (BottomSheetLayout)view.findViewById(R.id.bottomsheet);
+        bottomSheet = (BottomSheetLayout)view.findViewById(R.id.bottomsheet);
 
-        Button buttonCategories = (Button)view.findViewById(R.id.buttonCategories);
-        buttonCategories.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                View bottomSheetLayout = LayoutInflater.from(getActivity()).inflate(R.layout.bottomsheet_categories, bottomSheet, false);
-                bottomSheet.showWithSheetView(bottomSheetLayout);
-                RecyclerView recyclerView = (RecyclerView)bottomSheetLayout.findViewById(R.id.recyclerViewCategories);
-                LinearLayoutManager layoutManager
-                        = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-                recyclerView.setLayoutManager(layoutManager);
-                String[] list = {"plomeria","cerrajeria","jardineria","limpieza"};
-                BottomSheetCategoriesAdapter adapter = new BottomSheetCategoriesAdapter(Arrays.asList(list),getActivity());
-                recyclerView.setAdapter(adapter);
-            }
-        });
+        buttonCategories = (Button)view.findViewById(R.id.buttonCategories);
+        rvCategories = (RecyclerView)view.findViewById(R.id.recyclerViewBusinessCategories);
+        layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        rvCategories.setLayoutManager(layoutManager);
+
+
         editTextName = (EditText)view.findViewById(R.id.editTextBusinessName);
         editTextDescription = (EditText)view.findViewById(R.id.editTextBusinessDescription);
         getBusinessInformation();
+
         return view;
     }
 
     private void getBusinessInformation() {
         ParseQuery<ParseObject> queryServices = ParseQuery.getQuery("HomeServices");
         queryServices.whereEqualTo("serviceProvider", ParseUser.getCurrentUser());
+        queryServices.include("Category");
         queryServices.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
                     editTextName.setText(parseObject.getString("name"));
                     editTextDescription.setText(parseObject.getString("description"));
+                    List<ParseObject> list = parseObject.getList("Category");
+                    currentCategories = new ArrayList<>();
+                    List<String> names = new ArrayList<>();
+                    for (ParseObject po : list) {
+                        names.add(po.getString("name"));
+                        Category category = new Category();
+                        category.setId(po.getObjectId());
+                        category.setName(po.getString("name"));
+                        category.setImage(po.getParseFile("image").getUrl());
+                        category.setMainColor(po.getString("mainColor"));
+                        category.setSecondaryColor("secondaryColor");
+                        currentCategories.add(category);
+                    }
+                    CategoriesAdapter adapter = new CategoriesAdapter(currentCategories,getActivity());
+                    rvCategories.setAdapter(adapter);
+
+                    getAvailableCategories(names);
                 } else {//ups
-                  //TODO handle the error
+                    //TODO handle the error
                 }
             }
         });
 
     }
 
+    private void  getAvailableCategories(List<String> names){
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Categories");
+       // query.whereNot("objectId",category);
+        query.whereNotContainedIn("name", names);
 
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null) {
+                    availableCategories = new ArrayList<>();
+                    for (ParseObject po : list) {
+                        Category category = new Category();
+                        category.setId(po.getObjectId());
+                        category.setName(po.getString("name"));
+                        category.setImage(po.getParseFile("image").getUrl());
+                        category.setMainColor(po.getString("mainColor"));
+                        category.setSecondaryColor("secondaryColor");
+                        availableCategories.add(category);
+                    }
+
+                    buttonCategories.setOnClickListener(new MyOnClickListener(bottomSheet, availableCategories));
+                } else {
+                    Log.e("ERROR", e.getMessage());
+                }
+            }
+        });
+
+
+    }
+
+
+    private class MyOnClickListener implements View.OnClickListener {
+        private final BottomSheetLayout bottomSheet;
+        private List<Category> categories;
+
+        public MyOnClickListener(BottomSheetLayout bottomSheet,List<Category> categories) {
+            this.bottomSheet = bottomSheet;
+            this.categories = categories;
+        }
+
+        @Override
+        public void onClick(View v) {
+            View bottomSheetLayout = LayoutInflater.from(getActivity()).inflate(R.layout.bottomsheet_categories, bottomSheet, false);
+            bottomSheet.showWithSheetView(bottomSheetLayout);
+            RecyclerView recyclerView = (RecyclerView)bottomSheetLayout.findViewById(R.id.recyclerViewCategories);
+            layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            recyclerView.setLayoutManager(layoutManager);
+            CategoriesAdapter adapter = new CategoriesAdapter(categories,getActivity());
+            recyclerView.setAdapter(adapter);
+        }
+    }
 }
