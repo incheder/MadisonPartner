@@ -8,55 +8,69 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="@dimen/activity_horizontal_margin">
+        android:layout_height="match_parent">
 
-        <android.support.design.widget.TextInputLayout
+        <ScrollView
+            android:id="@+id/nScrollView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/elements_margin"
-            android:id="@+id/business_name">
+            android:layout_height="match_parent">
 
-            <EditText
-                android:id="@+id/editTextBusinessName"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/business_name"
-                />
+                android:padding="@dimen/activity_horizontal_margin">
 
-        </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/elements_margin"
+                    android:id="@+id/business_name">
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/business_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/elements_margin"
-            android:layout_below="@+id/business_name">
+                    <EditText
+                        android:id="@+id/editTextBusinessName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/business_name"
+                        />
 
-            <EditText
-                android:id="@+id/editTextBusinessDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/business_description"
-                />
+                </android.support.design.widget.TextInputLayout>
 
-        </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/business_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/elements_margin"
+                    android:layout_below="@+id/business_name">
 
-        <Button
-            android:id="@+id/buttonCategories"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/choose_categories"
-            android:layout_below="@+id/business_description"
-            style="?android:attr/borderlessButtonStyle"
-            />
+                    <EditText
+                        android:id="@+id/editTextBusinessDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/business_description"
+                        />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerViewBusinessCategories"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/buttonCategories"
-            />
+                </android.support.design.widget.TextInputLayout>
+
+                <Button
+                    android:id="@+id/buttonCategories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/choose_categories"
+                    android:layout_below="@+id/business_description"
+                    style="?android:attr/borderlessButtonStyle"
+                    />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerViewBusinessCategories"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/buttonCategories"
+
+                    />
+
+            </RelativeLayout>
+
+        </ScrollView>
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
@@ -72,8 +86,16 @@
             app:backgroundTint="@color/fab_summary"
             tools:ignore="UnusedAttribute" />
 
-
     </RelativeLayout>
+
+
+
+
+
+
+
+
+
 
 
 

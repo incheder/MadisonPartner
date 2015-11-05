@@ -46,8 +46,11 @@ public class InformationFragment extends Fragment {
     private BottomSheetLayout bottomSheet;
     private List<Category> availableCategories;
     private List<Category> currentCategories;
-    private  RecyclerView rvCategories;
-
+    private RecyclerView rvCategories;
+    private CategoriesAdapter currentAdapter;
+    private CategoriesAdapter availableAdapter;
+    private RecyclerView recyclerViewAvailables;
+    private View bottomSheetLayout;
 
     /**
      * Use this factory method to create a new instance of
@@ -89,7 +92,7 @@ public class InformationFragment extends Fragment {
 
         buttonCategories = (Button)view.findViewById(R.id.buttonCategories);
         rvCategories = (RecyclerView)view.findViewById(R.id.recyclerViewBusinessCategories);
-        layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        layoutManager = new org.solovyev.android.views.llm.LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         rvCategories.setLayoutManager(layoutManager);
 
 
@@ -123,8 +126,8 @@ public class InformationFragment extends Fragment {
                         category.setSecondaryColor("secondaryColor");
                         currentCategories.add(category);
                     }
-                    CategoriesAdapter adapter = new CategoriesAdapter(currentCategories,getActivity());
-                    rvCategories.setAdapter(adapter);
+                    currentAdapter = new CategoriesAdapter(currentCategories, getActivity(), InformationFragment.this, false);
+                    rvCategories.setAdapter(currentAdapter);
 
                     getAvailableCategories(names);
                 } else {//ups
@@ -155,7 +158,7 @@ public class InformationFragment extends Fragment {
                         availableCategories.add(category);
                     }
 
-                    buttonCategories.setOnClickListener(new MyOnClickListener(bottomSheet, availableCategories));
+                    buttonCategories.setOnClickListener(new MyOnClickListener(bottomSheet));
                 } else {
                     Log.e("ERROR", e.getMessage());
                 }
@@ -168,22 +171,50 @@ public class InformationFragment extends Fragment {
 
     private class MyOnClickListener implements View.OnClickListener {
         private final BottomSheetLayout bottomSheet;
-        private List<Category> categories;
 
-        public MyOnClickListener(BottomSheetLayout bottomSheet,List<Category> categories) {
+
+        public MyOnClickListener(BottomSheetLayout bottomSheet) {
             this.bottomSheet = bottomSheet;
-            this.categories = categories;
+
         }
 
         @Override
         public void onClick(View v) {
-            View bottomSheetLayout = LayoutInflater.from(getActivity()).inflate(R.layout.bottomsheet_categories, bottomSheet, false);
-            bottomSheet.showWithSheetView(bottomSheetLayout);
-            RecyclerView recyclerView = (RecyclerView)bottomSheetLayout.findViewById(R.id.recyclerViewCategories);
-            layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-            recyclerView.setLayoutManager(layoutManager);
-            CategoriesAdapter adapter = new CategoriesAdapter(categories,getActivity());
-            recyclerView.setAdapter(adapter);
+            if(availableCategories.size() >  0){
+                if(bottomSheetLayout == null){
+                    bottomSheetLayout = LayoutInflater.from(getActivity()).inflate(R.layout.bottomsheet_categories, bottomSheet, false);
+                }
+                bottomSheet.showWithSheetView(bottomSheetLayout);
+                if(recyclerViewAvailables == null){
+                    recyclerViewAvailables = (RecyclerView)bottomSheetLayout.findViewById(R.id.recyclerViewCategories);
+                    layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+                    recyclerViewAvailables.setLayoutManager(layoutManager);
+                }
+                //TODO usar notifydatasetchanged en vez de crear nuevos adapter , reusar layoutmanager
+                if(availableAdapter == null){
+                    availableAdapter = new CategoriesAdapter(availableCategories,getActivity(),InformationFragment.this,true);
+                    recyclerViewAvailables.setAdapter(availableAdapter);
+                } else{
+                    availableAdapter.notifyDataSetChanged();
+                }
+
+            }
         }
     }
+
+    public void addCategory(Category category){
+        bottomSheet.dismissSheet();
+        currentCategories.add(category);
+        currentAdapter.notifyDataSetChanged();
+        availableCategories.remove(category);
+        availableAdapter.notifyDataSetChanged();
+
+    }
+
+    public void removeCategory(Category category){
+        availableCategories.add(category);
+
+
+    }
+
 }
