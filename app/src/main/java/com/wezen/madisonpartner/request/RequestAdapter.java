@@ -10,6 +10,13 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.Picasso;
 import com.wezen.madisonpartner.R;
 
@@ -43,7 +50,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
 
     @Override
     public void onBindViewHolder(RequestHolder holder, final int position) {
-        HomeServiceRequest item = list.get(position);
+        final HomeServiceRequest item = list.get(position);
         holder.name.setText(item.getName());
         holder.date.setText(item.getDate());
         holder.description.setText(item.getDescription());
@@ -56,10 +63,23 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
         holder.rating.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              //  ((RequestHolder) context).showBottomSheet(position);
+                //  ((RequestHolder) context).showBottomSheet(position);
             }
         });
 
+
+        holder.map.onCreate(null);
+        holder.map.onResume();
+        holder.map.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                MapsInitializer.initialize(context);
+                GoogleMap gMap = googleMap;
+
+                gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(item.getLocation(),16));
+                gMap.addMarker(new MarkerOptions().position(item.getLocation()));
+            }
+        });
 
 
 
@@ -72,13 +92,15 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
 
     public class RequestHolder extends RecyclerView.ViewHolder{
 
-        public TextView name;
-        public TextView date;
-        public TextView description;
-        public RatingBar review;
-        public ImageView image;
-        public Button rating;
-        public TextView status;
+        private TextView name;
+        private TextView date;
+        private TextView description;
+        private RatingBar review;
+        private ImageView image;
+        private Button rating;
+        private TextView status;
+        private MapView map;
+
 
         public RequestHolder(View itemView) {
             super(itemView);
@@ -90,6 +112,8 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
             date = (TextView)itemView.findViewById(R.id.request_item_date);
             review = (RatingBar)itemView.findViewById(R.id.requestItemRating);
             rating = (Button)itemView.findViewById(R.id.buttonRequestItem);
+            map = (MapView)itemView.findViewById(R.id.request_map);
+
         }
     }
 

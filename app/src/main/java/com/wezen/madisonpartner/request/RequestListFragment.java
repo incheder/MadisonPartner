@@ -82,7 +82,7 @@ public class RequestListFragment extends Fragment {
         requestList = new ArrayList<>();
         adapter = new RequestAdapter(requestList,getActivity());
         recyclerViewRequestList.setAdapter(adapter);
-        getList(HomeServiceRequestStatus.ENVIADO);
+        getList(null);
 
         return view;
     }
