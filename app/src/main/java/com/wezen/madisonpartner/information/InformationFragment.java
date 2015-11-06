@@ -1,6 +1,8 @@
 package com.wezen.madisonpartner.information;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,9 +18,11 @@ import com.flipboard.bottomsheet.BottomSheetLayout;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.wezen.madisonpartner.R;
 import com.wezen.madisonpartner.information.bottomsheet.CategoriesAdapter;
 
@@ -111,6 +115,7 @@ public class InformationFragment extends Fragment {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
+                    saveInstallationData(parseObject);
                     editTextName.setText(parseObject.getString("name"));
                     editTextDescription.setText(parseObject.getString("description"));
                     List<ParseObject> list = parseObject.getList("Category");
@@ -214,6 +219,31 @@ public class InformationFragment extends Fragment {
     public void removeCategory(Category category){
         availableCategories.add(category);
 
+
+    }
+
+    private void saveInstallationData(ParseObject homeService){
+        final SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        int highScore = sharedPref.getInt(getString(R.string.installation_already_saved), 0);
+        if(highScore == 0){
+            ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+            // ParseObject hs = ParseObject.createWithoutData("HomeServices",homeService.getObjectId());
+            installation.put("homeService",homeService);
+            installation.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if(e == null){
+                        Log.d("SUCCESS", "installation saved");
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putInt(getString(R.string.installation_already_saved), 1);
+                        editor.apply();
+                    } else {
+                        Log.e("ERROR", "installation not saved: "+ e.getMessage());
+                    }
+                }
+            });
+
+        }
 
     }
 

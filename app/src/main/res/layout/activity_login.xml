@@ -120,7 +120,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/action_register"
                     android:gravity="center"
-                    style="?android:textAppearanceMedium"/>
+                    style="?android:textAppearanceMedium"
+                    android:visibility="gone"/>
 
             </LinearLayout>
 

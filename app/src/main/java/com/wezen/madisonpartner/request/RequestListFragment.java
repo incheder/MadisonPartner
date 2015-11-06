@@ -96,6 +96,7 @@ public class RequestListFragment extends Fragment {
             queryRequest.whereEqualTo("status", status.getValue());
         }
         queryRequest.whereNotEqualTo("status", HomeServiceRequestStatus.RECHAZADO.getValue());
+       // queryRequest.whereNotEqualTo("status", HomeServiceRequestStatus.ENVIADO.getValue());
         queryRequest.whereMatchesQuery("homeService",queryServices);
         queryRequest.include("homeService");
         queryRequest.include("user");

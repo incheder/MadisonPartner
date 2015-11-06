@@ -21,10 +21,7 @@
             android:layout_height="150dp"
             android:layout_marginBottom="@dimen/elements_margin_request_item"
             card_view:liteMode="true"
-
-            />
-
-
+        />
 
         <LinearLayout
             android:layout_width="match_parent"

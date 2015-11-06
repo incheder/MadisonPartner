@@ -67,6 +67,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         ParseUser currentUser = ParseUser.getCurrentUser();
         if(currentUser != null){
             goToCategories();
+            finish();
         }
         setContentView(R.layout.activity_login);
 
@@ -259,6 +260,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 showProgress(false);
                 if(parseUser != null && parseUser.getInt("userType") == 2){//no problemo
                     goToCategories();
+                    finish();
                 } else if(parseUser != null){//ups!
                     ParseUser.logOut();
                     Toast.makeText(LoginActivity.this, R.string.wrong_credentials, Toast.LENGTH_SHORT).show();
