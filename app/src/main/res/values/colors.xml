@@ -52,4 +52,5 @@
     <color name="fab_summary">#F44336</color>
     <color name="order_sent_text">#FFFFFF</color>
     <color name="button_text_color">#fff</color>
+    <color name="status_label_color">#ffffff</color>
 </resources>

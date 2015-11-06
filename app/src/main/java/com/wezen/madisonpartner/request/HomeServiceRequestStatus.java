@@ -10,7 +10,8 @@ public enum HomeServiceRequestStatus {
     ENVIADO(0),
     ASIGNADO(1),
     CANCELADO(2),
-    COMPLETO(3);
+    COMPLETO(3),
+    RECHAZADO(4);
 
     private final int value;
     private static Map<Integer,HomeServiceRequestStatus> map = new HashMap<>();

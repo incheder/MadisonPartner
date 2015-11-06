@@ -7,7 +7,7 @@ import com.google.android.gms.maps.model.LatLng;
  */
 public class HomeServiceRequest {
 
-    private String image;
+    private String userAvatar;
     private String name;
     private String description;
     private int review;
@@ -15,13 +15,14 @@ public class HomeServiceRequest {
     private HomeServiceRequestStatus status;
     private LatLng userLocation;
     private String homeServiceID;
+    private String address;
 
-    public String getImage() {
-        return image;
+    public String getUserAvatar() {
+        return userAvatar;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setUserAvatar(String userAvatar) {
+        this.userAvatar = userAvatar;
     }
 
     public String getName() {
@@ -78,5 +79,13 @@ public class HomeServiceRequest {
 
     public void setHomeServiceID(String homeServiceID) {
         this.homeServiceID = homeServiceID;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

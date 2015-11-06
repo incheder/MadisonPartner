@@ -88,7 +88,6 @@ public class RequestListFragment extends Fragment {
     }
 
     private void getList(HomeServiceRequestStatus status) {
-        HomeServiceRequest hs;
 
         ParseQuery<ParseObject> queryServices = ParseQuery.getQuery("HomeServices");
         queryServices.whereEqualTo("serviceProvider", ParseUser.getCurrentUser());
@@ -96,9 +95,11 @@ public class RequestListFragment extends Fragment {
         if(status != null){
             queryRequest.whereEqualTo("status", status.getValue());
         }
+        queryRequest.whereNotEqualTo("status", HomeServiceRequestStatus.RECHAZADO.getValue());
         queryRequest.whereMatchesQuery("homeService",queryServices);
         queryRequest.include("homeService");
-
+        queryRequest.include("user");
+        queryRequest.orderByDescending("createdAt");
         queryRequest.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
@@ -107,13 +108,14 @@ public class RequestListFragment extends Fragment {
                     for (ParseObject po : list) {
                         HomeServiceRequest request = new HomeServiceRequest();
                         request.setLocation(new LatLng(po.getParseGeoPoint("userLocation").getLatitude(), po.getParseGeoPoint("userLocation").getLongitude()));
-                        request.setName(po.getParseObject("homeService").getString("name"));
+                        request.setName(po.getParseObject("user").getString("username"));
                         request.setDescription(po.getString("problemDescription"));
                         int status = po.getInt("status");
                         request.setStatus(HomeServiceRequestStatus.valueOf(status));
                         request.setHomeServiceID((po.getParseObject("homeService").getObjectId()));
                         request.setDate(po.getCreatedAt().toString());
-                        request.setImage(po.getParseObject("homeService").getParseFile("image").getUrl());
+                        request.setUserAvatar(po.getParseObject("user").getParseFile("userImage").getUrl());
+                        request.setAddress(po.getString("address"));
                         requestList.add(request);
                     }
 

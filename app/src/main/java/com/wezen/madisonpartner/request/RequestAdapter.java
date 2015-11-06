@@ -1,6 +1,7 @@
 package com.wezen.madisonpartner.request;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.Picasso;
 import com.wezen.madisonpartner.R;
@@ -55,17 +55,25 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
         holder.date.setText(item.getDate());
         holder.description.setText(item.getDescription());
         holder.review.setMax(item.getReview());
-        Picasso.with(context).load(item.getImage()).into(holder.image);
+        Picasso.with(context).load(item.getUserAvatar()).into(holder.userAvatar);
+        holder.address.setText(item.getAddress());
         if(item.getStatus()!=null){
             holder.status.setText(item.getStatus().toString());
+            setColorByStatus(holder.status,item.getStatus());
         }
 
-        holder.rating.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //  ((RequestHolder) context).showBottomSheet(position);
-            }
-        });
+        if(item.getStatus() != HomeServiceRequestStatus.ENVIADO){
+            holder.accept.setVisibility(View.GONE);
+        } else {
+            holder.accept.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //  ((RequestHolder) context).showBottomSheet(position);
+                }
+            });
+
+        }
+
 
 
         holder.map.onCreate(null);
@@ -76,8 +84,9 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
                 MapsInitializer.initialize(context);
                 GoogleMap gMap = googleMap;
 
-                gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(item.getLocation(),16));
+                gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(item.getLocation(), 16));
                 gMap.addMarker(new MarkerOptions().position(item.getLocation()));
+                gMap.getUiSettings().setAllGesturesEnabled(false);
             }
         });
 
@@ -93,11 +102,12 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
     public class RequestHolder extends RecyclerView.ViewHolder{
 
         private TextView name;
+        private TextView address;
         private TextView date;
         private TextView description;
         private RatingBar review;
-        private ImageView image;
-        private Button rating;
+        private ImageView userAvatar;
+        private Button accept;
         private TextView status;
         private MapView map;
 
@@ -105,16 +115,41 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
         public RequestHolder(View itemView) {
             super(itemView);
 
-            image = (ImageView)itemView.findViewById(R.id.request_image);
+            userAvatar = (ImageView)itemView.findViewById(R.id.requestUserAvatar);
             name = (TextView)itemView.findViewById(R.id.request_name);
+            address = (TextView)itemView.findViewById(R.id.request_address);
             description = (TextView)itemView.findViewById(R.id.request_item_description);
             status = (TextView)itemView.findViewById(R.id.request_item_status);
             date = (TextView)itemView.findViewById(R.id.request_item_date);
             review = (RatingBar)itemView.findViewById(R.id.requestItemRating);
-            rating = (Button)itemView.findViewById(R.id.buttonRequestItem);
+            accept = (Button)itemView.findViewById(R.id.buttonRequestItem);
             map = (MapView)itemView.findViewById(R.id.request_map);
+            map.setClickable(false);
 
         }
+    }
+
+    private void setColorByStatus(TextView textView, HomeServiceRequestStatus status){
+        int color = ContextCompat.getColor(context, R.color.transparent);
+        switch (status) {
+            case ENVIADO:
+                color = ContextCompat.getColor(context, R.color.palette_green);
+                break;
+            case ASIGNADO:
+                color = ContextCompat.getColor(context, R.color.palette_yellow_dark);
+                break;
+            case CANCELADO:
+                color = ContextCompat.getColor(context, R.color.palette_red);
+                break;
+            case COMPLETO:
+                color = ContextCompat.getColor(context, R.color.palette_blue);
+                break;
+            case RECHAZADO:
+                color = ContextCompat.getColor(context, R.color.palette_red);
+                break;
+        }
+        textView.setBackgroundColor(color);
+
     }
 
 
