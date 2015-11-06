@@ -14,6 +14,11 @@
     </style>
 
     <style name="AppTheme.Button" parent="Base.Widget.AppCompat.Button">
-    <item name="colorButtonNormal">@color/primaryDark</item>
+        <item name="colorButtonNormal">@color/primaryDark</item>
     </style>
+
+    <style name="AppTheme.AcceptRequestButton" parent="Base.Widget.AppCompat.Button">
+        <item name="colorButtonNormal">@color/accent</item>
+    </style>
+
 </resources>

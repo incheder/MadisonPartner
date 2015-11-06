@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MadisonPartner</string>
+    <string name="app_name">Madison Partner</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -12,7 +12,6 @@
     <string name="drawer_menu_settings">Configuracion</string>
     <string name="drawer_menu_help">Ayuda</string>
 
-<!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="business_name">Nombre del negocio</string>
     <string name="business_description">Descripcion del negocio</string>
@@ -26,6 +25,8 @@
     <string name="choose_categories">Elegir Categorias</string>
     <string name="wrong_credentials">Datos incorrectos</string>
     <string name="choose_your_category">Elige la categoría que deseas agregar</string>
-    <string name="title_activity_incoming_request">IncomingRequestActivity</string>
+    <string name="title_activity_incoming_request">Nueva Solicitud</string>
     <string name="installation_already_saved">intallation_saved</string>
+    <string name="accept_request">Aceptar</string>
+    <string name="decline_request">Rechazar</string>
 </resources>
