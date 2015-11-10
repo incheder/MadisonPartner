@@ -1,13 +1,17 @@
 package com.wezen.madisonpartner.request;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,11 +27,20 @@ import com.parse.ParseQuery;
 import com.squareup.picasso.Picasso;
 import com.wezen.madisonpartner.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class IncomingRequestActivity extends AppCompatActivity {
+public class IncomingRequestActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
+        TimePickerDialog.OnTimeSetListener, IncomingRequestDialogFragment.OnClickIncomingRequestDialog,DialogInterface.OnDismissListener, DialogInterface.OnCancelListener{
     private MapView map;
     private GoogleMap gMap;
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE dd 'de' MMM 'del 'yyyy 'a las' hh:mm a", Locale.getDefault());
+    private Calendar calendarDate;
+    private Button accept;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +118,7 @@ public class IncomingRequestActivity extends AppCompatActivity {
         TextView userName = (TextView)findViewById(R.id.incoming_request_name);
         TextView userAddress = (TextView)findViewById(R.id.incoming_request_address);
         TextView description = (TextView)findViewById(R.id.incoming_request_item_description);
-        Button accept = (Button)findViewById(R.id.incoming_request_accept);
+        accept = (Button)findViewById(R.id.incoming_request_accept);
         Button decline = (Button)findViewById(R.id.incoming_request_decline);
         accept.setVisibility(View.VISIBLE);
         decline.setVisibility(View.VISIBLE);
@@ -115,6 +128,67 @@ public class IncomingRequestActivity extends AppCompatActivity {
         userName.setText(request.getName());
         userAddress.setText(request.getAddress());
         description.setText(request.getDescription());
+        accept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DateDialogFragment dialog = DateDialogFragment.newInstance("","");
+                dialog.show(getSupportFragmentManager(),null);
+            }
+        });
 
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        calendarDate = Calendar.getInstance();
+        calendarDate.set(year,monthOfYear,dayOfMonth);
+
+        TimeDialogFragment dialog = TimeDialogFragment.newInstance("","");
+        dialog.show(getSupportFragmentManager(),null);
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
+        calendar.set(Calendar.MINUTE,minute);
+        calendar.set(Calendar.YEAR, calendarDate.get(Calendar.YEAR));
+        calendar.set(Calendar.MONTH, calendarDate.get(Calendar.MONTH));
+        calendar.set(Calendar.DAY_OF_MONTH, calendarDate.get(Calendar.DAY_OF_MONTH));
+
+        Date timeToAttend = calendar.getTime();
+        String message = getResources().getString(R.string.invalid_date);
+        String title = getResources().getString(R.string.choose_another_date);
+        boolean showCancel = false;
+
+        if(!timeToAttend.before(new Date())){
+            message = dateFormat.format(timeToAttend);
+            title = getResources().getString(R.string.incoming_request_dialog_title);
+            showCancel = true;
+        }
+
+        IncomingRequestDialogFragment dialog = IncomingRequestDialogFragment.newInstance(message,title,showCancel);
+        dialog.show(getSupportFragmentManager(),null);
+
+    }
+
+    @Override
+    public void onPositiveButtonClicked() {
+
+    }
+
+    @Override
+    public void onNegativeButtonClicked() {
+
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        Toast.makeText(IncomingRequestActivity.this, "dismiss", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        Toast.makeText(IncomingRequestActivity.this, "dismiss", Toast.LENGTH_SHORT).show();
     }
 }

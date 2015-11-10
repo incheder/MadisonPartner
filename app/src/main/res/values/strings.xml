@@ -29,4 +29,15 @@
     <string name="installation_already_saved">intallation_saved</string>
     <string name="accept_request">Aceptar</string>
     <string name="decline_request">Rechazar</string>
+    <string name="title_activity_date_and_time">DateAndTimeActivity</string>
+    <string name="set_date">Elige la fecha en la que acudirás  (Te recomendamos que sea en el menor tiempo posible)</string>
+    <string name="set_time">Elige la hora en la que acudirás  (Te recomendamos que sea en el menor tiempo posible)</string>
+    <string name="choose_a_date">Elige la fecha en la que acudiras a realizar el servicio</string>
+    <string name="choose_a_time">Elige la hora en la que acudiras a realizar el servicio</string>
+    <string name="incoming_request_dialog">Atenderas esta petición el día:\n%1$s</string>
+    <string name="incoming_request_dialog_title">Confirmar</string>
+    <string name="yes">Aceptar</string>
+    <string name="no">Cancelar</string>
+    <string name="invalid_date">No creemos que llegues a tiempo, elige una fecha posterior a la actual</string>
+    <string name="choose_another_date">Elige otra fecha</string>
 </resources>
