@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.DatePicker;
+import android.widget.Toast;
 
 import com.wezen.madisonpartner.R;
 
@@ -22,7 +23,7 @@ public class DateDialogFragment extends DialogFragment{
     private static final String ARG_HOME_SERVICE_NAME = "home_service_name";
     private static final String ARG_USER_ADDRESS = "user_address";
     private DatePickerDialog.OnDateSetListener mListener;
-    private DialogInterface.OnCancelListener dismissListener;
+    private DialogInterface.OnClickListener cancelListener;
 
 
     public static DateDialogFragment newInstance(String name, String address) {
@@ -52,7 +53,7 @@ public class DateDialogFragment extends DialogFragment{
             AppCompatActivity activity = (AppCompatActivity)context;
             try {
                 mListener = (DatePickerDialog.OnDateSetListener) activity;
-                dismissListener = ( DialogInterface.OnCancelListener) activity;
+                cancelListener = ( DialogInterface.OnClickListener) activity;
             } catch (ClassCastException e) {
                 throw new ClassCastException(activity.toString()
                         + " must implement DatePickerDialog.OnDateSetListener");
@@ -71,7 +72,7 @@ public class DateDialogFragment extends DialogFragment{
         int day = c.get(Calendar.DAY_OF_MONTH);
         DatePickerDialog datePickerDialog =  new DatePickerDialog(getActivity(),mListener,year,month,day);
         datePickerDialog.setTitle(R.string.choose_a_date);
-        datePickerDialog.setOnCancelListener(dismissListener);
+        datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.no), cancelListener);
         return datePickerDialog;
     }
 

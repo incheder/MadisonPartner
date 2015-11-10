@@ -35,12 +35,13 @@ import java.util.Locale;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class IncomingRequestActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
-        TimePickerDialog.OnTimeSetListener, IncomingRequestDialogFragment.OnClickIncomingRequestDialog,DialogInterface.OnDismissListener, DialogInterface.OnCancelListener{
+        TimePickerDialog.OnTimeSetListener, IncomingRequestDialogFragment.OnClickIncomingRequestDialog,DialogInterface.OnClickListener{
     private MapView map;
     private GoogleMap gMap;
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE dd 'de' MMM 'del 'yyyy 'a las' hh:mm a", Locale.getDefault());
     private Calendar calendarDate;
     private Button accept;
+    private Button decline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +92,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         query.getInBackground(id, new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject po, ParseException e) {
-                if(e == null){
+                if (e == null) {
                     HomeServiceRequest incomingRequest = new HomeServiceRequest();
                     incomingRequest.setLocation(new LatLng(po.getParseGeoPoint("userLocation").getLatitude(), po.getParseGeoPoint("userLocation").getLongitude()));
                     incomingRequest.setName(po.getParseObject("user").getString("username"));
@@ -119,7 +120,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         TextView userAddress = (TextView)findViewById(R.id.incoming_request_address);
         TextView description = (TextView)findViewById(R.id.incoming_request_item_description);
         accept = (Button)findViewById(R.id.incoming_request_accept);
-        Button decline = (Button)findViewById(R.id.incoming_request_decline);
+        decline = (Button)findViewById(R.id.incoming_request_decline);
         accept.setVisibility(View.VISIBLE);
         decline.setVisibility(View.VISIBLE);
         gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(request.getLocation(), 14));
@@ -131,8 +132,17 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DateDialogFragment dialog = DateDialogFragment.newInstance("","");
-                dialog.show(getSupportFragmentManager(),null);
+                accept.setEnabled(false);
+                decline.setEnabled(false);
+                DateDialogFragment dialog = DateDialogFragment.newInstance("", "");
+                dialog.setCancelable(false);
+                dialog.show(getSupportFragmentManager(), null);
+            }
+        });
+        decline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(IncomingRequestActivity.this, "decline", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -144,6 +154,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         calendarDate.set(year,monthOfYear,dayOfMonth);
 
         TimeDialogFragment dialog = TimeDialogFragment.newInstance("","");
+        dialog.setCancelable(false);
         dialog.show(getSupportFragmentManager(),null);
     }
 
@@ -168,27 +179,29 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         }
 
         IncomingRequestDialogFragment dialog = IncomingRequestDialogFragment.newInstance(message,title,showCancel);
+        dialog.setCancelable(false);
         dialog.show(getSupportFragmentManager(),null);
 
     }
 
     @Override
     public void onPositiveButtonClicked() {
-
+        enableButtons();
     }
 
     @Override
     public void onNegativeButtonClicked() {
-
+        enableButtons();
     }
 
     @Override
-    public void onDismiss(DialogInterface dialog) {
-        Toast.makeText(IncomingRequestActivity.this, "dismiss", Toast.LENGTH_SHORT).show();
+    public void onClick(DialogInterface dialog, int which) {
+        enableButtons();
+
     }
 
-    @Override
-    public void onCancel(DialogInterface dialog) {
-        Toast.makeText(IncomingRequestActivity.this, "dismiss", Toast.LENGTH_SHORT).show();
+    private void enableButtons(){
+        accept.setEnabled(true);
+        decline.setEnabled(true);
     }
 }

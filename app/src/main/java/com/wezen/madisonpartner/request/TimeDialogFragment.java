@@ -22,7 +22,7 @@ public class TimeDialogFragment extends DialogFragment{
     private static final String ARG_HOME_SERVICE_NAME = "home_service_name";
     private static final String ARG_USER_ADDRESS = "user_address";
     private TimePickerDialog.OnTimeSetListener mListener;
-    private DialogInterface.OnDismissListener dismissListener;
+    private DialogInterface.OnClickListener cancelListener;
 
 
 
@@ -53,7 +53,7 @@ public class TimeDialogFragment extends DialogFragment{
             AppCompatActivity activity = (AppCompatActivity)context;
             try {
                 mListener = (TimePickerDialog.OnTimeSetListener) activity;
-                dismissListener = (DialogInterface.OnDismissListener)activity;
+                cancelListener = (DialogInterface.OnClickListener)activity;
             } catch (ClassCastException e) {
                 throw new ClassCastException(activity.toString()
                         + " must implement DatePickerDialog.OnDateSetListener");
@@ -71,8 +71,9 @@ public class TimeDialogFragment extends DialogFragment{
         int minute = c.get(Calendar.MINUTE);
 
         TimePickerDialog timePickerDialog =  new TimePickerDialog(getActivity(),mListener,hour,minute,false);
-        timePickerDialog.setOnDismissListener(dismissListener);
         timePickerDialog.setTitle(R.string.choose_a_time);
+        timePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.no), cancelListener);
+        timePickerDialog.setCancelable(false);
         return timePickerDialog;
     }
 
