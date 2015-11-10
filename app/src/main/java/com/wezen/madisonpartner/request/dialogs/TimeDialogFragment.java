@@ -1,6 +1,5 @@
-package com.wezen.madisonpartner.request;
+package com.wezen.madisonpartner.request.dialogs;
 
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;

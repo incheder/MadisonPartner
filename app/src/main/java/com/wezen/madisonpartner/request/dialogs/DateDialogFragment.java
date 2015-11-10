@@ -1,4 +1,4 @@
-package com.wezen.madisonpartner.request;
+package com.wezen.madisonpartner.request.dialogs;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.DatePicker;
-import android.widget.Toast;
 
 import com.wezen.madisonpartner.R;
 

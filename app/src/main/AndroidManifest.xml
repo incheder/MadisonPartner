@@ -45,24 +45,20 @@
             android:name=".login.LoginActivity"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateVisible" >
-            <!--<intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
-        </activity>
-        <activity
-            android:name=".request.IncomingRequestActivity"
-            android:label="@string/title_activity_incoming_request"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.wezen.madisonpartner.MainActivity" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".request.IncomingRequestActivity"
+            android:label="@string/title_activity_incoming_request"
+            android:parentActivityName=".MainActivity"
+            android:launchMode="singleTop">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.wezen.madisonpartner.MainActivity" />
         </activity>
 
         <service android:name="com.parse.PushService" />
@@ -87,6 +83,14 @@
             </intent-filter>
         </receiver>
 
+        <activity
+            android:name=".employees.EmployeeListActivity"
+            android:label="@string/title_activity_employee_list"
+            android:parentActivityName=".request.IncomingRequestActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.wezen.madisonpartner.request.IncomingRequestActivity" />
+        </activity>
     </application>
 
 </manifest>

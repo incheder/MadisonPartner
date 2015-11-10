@@ -1,4 +1,4 @@
-package com.wezen.madisonpartner.request;
+package com.wezen.madisonpartner.request.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

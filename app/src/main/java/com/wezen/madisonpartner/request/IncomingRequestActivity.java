@@ -3,6 +3,8 @@ package com.wezen.madisonpartner.request;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -26,6 +28,10 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.squareup.picasso.Picasso;
 import com.wezen.madisonpartner.R;
+import com.wezen.madisonpartner.employees.EmployeeListActivity;
+import com.wezen.madisonpartner.request.dialogs.DateDialogFragment;
+import com.wezen.madisonpartner.request.dialogs.IncomingRequestDialogFragment;
+import com.wezen.madisonpartner.request.dialogs.TimeDialogFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -36,6 +42,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class IncomingRequestActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
         TimePickerDialog.OnTimeSetListener, IncomingRequestDialogFragment.OnClickIncomingRequestDialog,DialogInterface.OnClickListener{
+    public static final int REQUEST_CODE = 1;
     private MapView map;
     private GoogleMap gMap;
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE dd 'de' MMM 'del 'yyyy 'a las' hh:mm a", Locale.getDefault());
@@ -54,6 +61,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         }
 
         map = (MapView)findViewById(R.id.incomming_request_map);
+        map.setClickable(false);
         map.onCreate(savedInstanceState);
         MapsInitializer.initialize(this);
         map.getMapAsync(new OnMapReadyCallback() {
@@ -132,6 +140,8 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Intent intent = new Intent(IncomingRequestActivity.this,EmployeeListActivity.class);
+                //startActivityForResult(intent, REQUEST_CODE);
                 accept.setEnabled(false);
                 decline.setEnabled(false);
                 DateDialogFragment dialog = DateDialogFragment.newInstance("", "");
@@ -187,6 +197,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     @Override
     public void onPositiveButtonClicked() {
         enableButtons();
+        //TODO crear cloud function para mandar el push al usuario que solicito el servicio, si un asistente realizará el servicio enviarle un push tambien
     }
 
     @Override
@@ -203,5 +214,18 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     private void enableButtons(){
         accept.setEnabled(true);
         decline.setEnabled(true);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUEST_CODE && resultCode == RESULT_OK){
+            String result = data.getStringExtra(EmployeeListActivity.EMPLOYEE_ID);
+            DateDialogFragment dialog = DateDialogFragment.newInstance("", "");
+            dialog.setCancelable(false);
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.add(dialog, null);
+            ft.commitAllowingStateLoss();
+
+        }
     }
 }
