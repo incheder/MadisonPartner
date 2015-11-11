@@ -41,4 +41,8 @@
     <string name="invalid_date">No creemos que llegues a tiempo, elige una fecha posterior a la actual</string>
     <string name="choose_another_date">Elige otra fecha</string>
     <string name="title_activity_employee_list">Elige quién realizará el servicio</string>
+    <string name="data_saved">Datos guardados</string>
+    <string name="data_not_saved">La informacion no se pudo guardar. Intentalo mas tarde</string>
+    <string name="name_required">Ingresa el nombre del negocio</string>
+    <string name="description_required">Ingresa la descripción del negocio</string>
 </resources>

@@ -4,15 +4,18 @@ package com.wezen.madisonpartner.information;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.flipboard.bottomsheet.BottomSheetLayout;
 import com.parse.FindCallback;
@@ -55,6 +58,7 @@ public class InformationFragment extends Fragment {
     private CategoriesAdapter availableAdapter;
     private RecyclerView recyclerViewAvailables;
     private View bottomSheetLayout;
+    private ParseObject business;
 
     /**
      * Use this factory method to create a new instance of
@@ -102,6 +106,15 @@ public class InformationFragment extends Fragment {
 
         editTextName = (EditText)view.findViewById(R.id.editTextBusinessName);
         editTextDescription = (EditText)view.findViewById(R.id.editTextBusinessDescription);
+        FloatingActionButton fabSave = (FloatingActionButton)view.findViewById(R.id.fabSaveBusinessInfo);
+        fabSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveBusinessInformation();
+            }
+        });
+
+
         getBusinessInformation();
 
         return view;
@@ -115,6 +128,7 @@ public class InformationFragment extends Fragment {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
                 if (e == null) {
+                    business = parseObject;
                     saveInstallationData(parseObject);
                     editTextName.setText(parseObject.getString("name"));
                     editTextDescription.setText(parseObject.getString("description"));
@@ -245,6 +259,46 @@ public class InformationFragment extends Fragment {
 
         }
 
+    }
+
+    private void saveBusinessInformation(){
+        if(business!= null && validateInput()){
+            business.put("name",editTextName.getText().toString());
+            business.put("description", editTextDescription.getText().toString());
+            List<ParseObject> categoriesList = new ArrayList<>();
+            for (Category category : currentCategories) {
+                ParseObject po = ParseObject.createWithoutData("Categories",category.getId());
+                categoriesList.add(po);
+            }
+            business.put("Category",categoriesList);
+            //business.addAllUnique("Category",categoriesList);
+            business.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        Toast.makeText(getActivity(), R.string.data_saved, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(), R.string.data_not_saved, Toast.LENGTH_SHORT).show();
+                        Log.e("ERROR", e.getMessage());
+                    }
+                }
+            });
+        }
+
+    }
+
+    private boolean validateInput(){
+        boolean isValid = true;
+        if(TextUtils.isEmpty(editTextName.getText().toString())){
+            isValid = false;
+            editTextName.setError(getResources().getString(R.string.name_required));
+        }
+        if(TextUtils.isEmpty(editTextDescription.getText().toString())){
+            isValid = false;
+            editTextDescription.setError(getResources().getString(R.string.description_required));
+        }
+
+        return isValid;
     }
 
 }
