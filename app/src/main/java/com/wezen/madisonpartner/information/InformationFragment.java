@@ -241,7 +241,7 @@ public class InformationFragment extends Fragment {
         int highScore = sharedPref.getInt(getString(R.string.installation_already_saved), 0);
         if(highScore == 0){
             ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-            // ParseObject hs = ParseObject.createWithoutData("HomeServices",homeService.getObjectId());
+            ParseObject hs = ParseObject.createWithoutData("HomeServices",homeService.getObjectId());
             installation.put("homeService",homeService);
             installation.saveInBackground(new SaveCallback() {
                 @Override

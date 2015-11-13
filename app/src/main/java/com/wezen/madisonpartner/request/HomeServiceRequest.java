@@ -16,6 +16,7 @@ public class HomeServiceRequest {
     private LatLng userLocation;
     private String homeServiceID;
     private String address;
+    private String userID;
 
     public String getUserAvatar() {
         return userAvatar;
@@ -87,5 +88,13 @@ public class HomeServiceRequest {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 }

@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -22,7 +23,9 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.FunctionCallback;
 import com.parse.GetCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -36,12 +39,15 @@ import com.wezen.madisonpartner.request.dialogs.TimeDialogFragment;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class IncomingRequestActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
         TimePickerDialog.OnTimeSetListener, IncomingRequestDialogFragment.OnClickIncomingRequestDialog,DialogInterface.OnClickListener{
+    public static final String REQUEST_ID = "request_id";
     public static final int REQUEST_CODE = 1;
     private MapView map;
     private GoogleMap gMap;
@@ -49,6 +55,11 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     private Calendar calendarDate;
     private Button accept;
     private Button decline;
+    private String id;
+    private HomeServiceRequest incomingRequest;
+    private DateDialogFragment dialogDate;
+    private TimeDialogFragment dialogTime;
+    private IncomingRequestDialogFragment dialogRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +71,10 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        if(getIntent().getExtras() != null){
+            id = getIntent().getStringExtra(REQUEST_ID);
+        }
+
         map = (MapView)findViewById(R.id.incomming_request_map);
         map.setClickable(false);
         map.onCreate(savedInstanceState);
@@ -69,7 +84,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             public void onMapReady(GoogleMap googleMap) {
                 gMap = googleMap;
                 gMap.getUiSettings().setAllGesturesEnabled(false);
-                getRequest("hpENjphqcW");
+                getRequest(id);
             }
         });
     }
@@ -101,7 +116,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             @Override
             public void done(ParseObject po, ParseException e) {
                 if (e == null) {
-                    HomeServiceRequest incomingRequest = new HomeServiceRequest();
+                    incomingRequest = new HomeServiceRequest();
                     incomingRequest.setLocation(new LatLng(po.getParseGeoPoint("userLocation").getLatitude(), po.getParseGeoPoint("userLocation").getLongitude()));
                     incomingRequest.setName(po.getParseObject("user").getString("username"));
                     incomingRequest.setDescription(po.getString("problemDescription"));
@@ -111,6 +126,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                     incomingRequest.setDate(po.getCreatedAt().toString());
                     incomingRequest.setUserAvatar(po.getParseObject("user").getParseFile("userImage").getUrl());
                     incomingRequest.setAddress(po.getString("address"));
+                    incomingRequest.setUserID(po.getParseObject("user").getObjectId());
                     setData(incomingRequest);
 
 
@@ -144,15 +160,16 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                 //startActivityForResult(intent, REQUEST_CODE);
                 accept.setEnabled(false);
                 decline.setEnabled(false);
-                DateDialogFragment dialog = DateDialogFragment.newInstance("", "");
-                dialog.setCancelable(false);
-                dialog.show(getSupportFragmentManager(), null);
+                dialogDate = DateDialogFragment.newInstance("", "");
+                dialogDate.setCancelable(false);
+                dialogDate.show(getSupportFragmentManager(), null);
             }
         });
         decline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(IncomingRequestActivity.this, "decline", Toast.LENGTH_SHORT).show();
+                sendPushToClient();
             }
         });
 
@@ -160,16 +177,22 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
 
     @Override
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        if(dialogDate != null){
+            dialogDate.dismiss();
+        }
         calendarDate = Calendar.getInstance();
         calendarDate.set(year,monthOfYear,dayOfMonth);
 
-        TimeDialogFragment dialog = TimeDialogFragment.newInstance("","");
-        dialog.setCancelable(false);
-        dialog.show(getSupportFragmentManager(),null);
+        dialogTime = TimeDialogFragment.newInstance("","");
+        dialogTime.setCancelable(false);
+        dialogTime.show(getSupportFragmentManager(), null);
     }
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        if(dialogTime!=null){
+            dialogTime.dismiss();
+        }
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
         calendar.set(Calendar.MINUTE,minute);
@@ -188,16 +211,20 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             showCancel = true;
         }
 
-        IncomingRequestDialogFragment dialog = IncomingRequestDialogFragment.newInstance(message,title,showCancel);
-        dialog.setCancelable(false);
-        dialog.show(getSupportFragmentManager(),null);
+        dialogRequest = IncomingRequestDialogFragment.newInstance(message,title,showCancel);
+        dialogRequest.setCancelable(false);
+        dialogRequest.show(getSupportFragmentManager(), null);
 
     }
 
     @Override
     public void onPositiveButtonClicked() {
+        if(dialogRequest!= null){
+            dialogRequest.dismiss();
+        }
         enableButtons();
         //TODO crear cloud function para mandar el push al usuario que solicito el servicio, si un asistente realizará el servicio enviarle un push tambien
+        sendPushToClient();
     }
 
     @Override
@@ -227,5 +254,21 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             ft.commitAllowingStateLoss();
 
         }
+    }
+
+    private void sendPushToClient(){
+        Map<String,Object> params = new HashMap<String, Object>();
+        params.put("client",incomingRequest.getUserID());
+        params.put("date","10/10/10");
+        ParseCloud.callFunctionInBackground("sendPushToClient", params, new FunctionCallback<Object>() {
+            @Override
+            public void done(Object o, ParseException e) {
+                if(e == null){
+                    Log.d("SUCCESS: ", o.toString());
+                } else{
+                    Log.e("ERROR: ", e.getMessage());
+                }
+            }
+        });
     }
 }
