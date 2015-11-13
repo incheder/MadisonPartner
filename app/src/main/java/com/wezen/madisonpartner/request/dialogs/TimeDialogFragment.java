@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.wezen.madisonpartner.R;
@@ -24,6 +25,12 @@ public class TimeDialogFragment extends DialogFragment{
     private DialogInterface.OnClickListener cancelListener;
 
 
+    @Override
+    public void show(FragmentManager manager, String tag) {
+        if (manager.findFragmentByTag(tag) == null) {
+            super.show(manager, tag);
+        }
+    }
 
     public static TimeDialogFragment newInstance(String name, String address) {
         TimeDialogFragment fragment = new TimeDialogFragment();

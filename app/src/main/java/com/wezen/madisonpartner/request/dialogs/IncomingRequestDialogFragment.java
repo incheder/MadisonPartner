@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.wezen.madisonpartner.R;
@@ -28,6 +29,13 @@ public class IncomingRequestDialogFragment extends DialogFragment {
     public interface OnClickIncomingRequestDialog {
         void onPositiveButtonClicked();
         void onNegativeButtonClicked();
+    }
+
+    @Override
+    public void show(FragmentManager manager, String tag) {
+        if (manager.findFragmentByTag(tag) == null) {
+            super.show(manager, tag);
+        }
     }
 
     public static IncomingRequestDialogFragment newInstance(String message, String title,boolean cancelButton) {

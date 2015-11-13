@@ -162,7 +162,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                 decline.setEnabled(false);
                 dialogDate = DateDialogFragment.newInstance("", "");
                 dialogDate.setCancelable(false);
-                dialogDate.show(getSupportFragmentManager(), null);
+                dialogDate.show(getSupportFragmentManager(), "dialogDate");
             }
         });
         decline.setOnClickListener(new View.OnClickListener() {
@@ -185,7 +185,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
 
         dialogTime = TimeDialogFragment.newInstance("","");
         dialogTime.setCancelable(false);
-        dialogTime.show(getSupportFragmentManager(), null);
+        dialogTime.show(getSupportFragmentManager(), "dialogTime");
     }
 
     @Override
@@ -213,7 +213,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
 
         dialogRequest = IncomingRequestDialogFragment.newInstance(message,title,showCancel);
         dialogRequest.setCancelable(false);
-        dialogRequest.show(getSupportFragmentManager(), null);
+        dialogRequest.show(getSupportFragmentManager(), "dialogRequest");
 
     }
 
