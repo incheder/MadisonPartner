@@ -1,5 +1,7 @@
 package com.wezen.madisonpartner;
 
+import android.content.Intent;
+import android.media.Image;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -11,13 +13,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.parse.ParseUser;
+import com.squareup.picasso.Picasso;
 import com.wezen.madisonpartner.home.DummyFragment;
 import com.wezen.madisonpartner.home.ViewPagerAdapter;
 import com.wezen.madisonpartner.information.InformationFragment;
+import com.wezen.madisonpartner.login.LoginActivity;
 import com.wezen.madisonpartner.request.RequestListFragment;
 
 public class MainActivity extends AppCompatActivity {
+
+    private NavigationView navigationView;
+    private String userName;
+    private String userEmail;
+    private String imageUrl;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar)findViewById(R.id.mainToolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.drawer);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        drawerLayout = (DrawerLayout)findViewById(R.id.drawer);
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
         //navigationView.setNavigationItemSelectedListener( navigationItemSelectedListener );
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.main_viewpager);
@@ -57,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
         //calling sync state is necessay or else your hamburger icon wont show up
         actionBarDrawerToggle.syncState();
+        fillNavigationViewHeader();
 
     }
 
@@ -68,6 +82,57 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager.setAdapter(adapter);
     }
+
+    private void fillNavigationViewHeader(){
+        ImageView imageAvatar = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.profile_image);
+        TextView textViewUsername = (TextView) navigationView.getHeaderView(0).findViewById(R.id.username);
+        TextView textViewEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email);
+        ParseUser user = ParseUser.getCurrentUser();
+        userName = user.getUsername();
+        userEmail = user.getEmail();
+        textViewUsername.setText(userName);
+        textViewEmail.setText(userEmail);
+        if(user.getParseFile("userImage")!= null){
+            imageUrl = user.getParseFile("userImage").getUrl();
+            Picasso.with(this).load(imageUrl).into(imageAvatar);
+        }
+
+    }
+
+    NavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(MenuItem menuItem) {
+            Intent toLaunch = null;
+
+            int id = menuItem.getItemId();
+
+            if(id == R.id.menu_account){
+
+            } else if (id == R.id.menu_history){
+
+            } else if (id == R.id.menu_settings){
+
+            } else if (id == R.id.menu_help){
+
+            } else if (id == R.id.menu_logout){
+                ParseUser.logOut();
+                goToLogin();
+            }
+            if(toLaunch != null){
+                menuItem.setChecked(true);
+                startActivity(toLaunch);
+                drawerLayout.closeDrawers();
+            }
+            return true;
+        }
+    };
+
+    private void goToLogin(){
+        Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+        loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(loginIntent);
+    }
+
 
 
 }
