@@ -45,4 +45,8 @@
     <string name="data_not_saved">La informacion no se pudo guardar. Intentalo mas tarde</string>
     <string name="name_required">Ingresa el nombre del negocio</string>
     <string name="description_required">Ingresa la descripción del negocio</string>
+    <string name="order_not_sent">No pudimos notificar al cliente, intenta contactarlo de nuevo</string>
+    <string name="title_activity_sending_notification">Enviando notificación</string>
+    <string name="order_sent">La notificaión fue enviada al cliente</string>
+    <string name="back">Volver</string>
 </resources>

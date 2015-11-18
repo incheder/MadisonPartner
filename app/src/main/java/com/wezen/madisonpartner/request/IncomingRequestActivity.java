@@ -32,6 +32,7 @@ import com.parse.ParseQuery;
 import com.squareup.picasso.Picasso;
 import com.wezen.madisonpartner.R;
 import com.wezen.madisonpartner.employees.EmployeeListActivity;
+import com.wezen.madisonpartner.notification.SendingNotificationActivity;
 import com.wezen.madisonpartner.request.dialogs.DateDialogFragment;
 import com.wezen.madisonpartner.request.dialogs.IncomingRequestDialogFragment;
 import com.wezen.madisonpartner.request.dialogs.TimeDialogFragment;
@@ -242,7 +243,11 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         enableButtons();
         //TODO crear cloud function para mandar el push al usuario que solicito el servicio, si un asistente realizará el servicio enviarle un push tambien
         if(date != null){
-            sendPushToClient(date);
+            Intent intent = new Intent(this, SendingNotificationActivity.class);
+            intent.putExtra(SendingNotificationActivity.DATE,date);
+            intent.putExtra(SendingNotificationActivity.ID,incomingRequest.getUserID());
+            startActivity(intent);
+
         }
     }
 
@@ -275,33 +280,6 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         }
     }
 
-    private void sendPushToClient(String date){
-        Map<String,Object> params = new HashMap<>();
-        params.put("client",incomingRequest.getUserID());
-        params.put("date",date);
-        ParseCloud.callFunctionInBackground("sendPushToClient", params, new FunctionCallback<Object>() {
-            @Override
-            public void done(Object o, ParseException e) {
-                if(e == null){
-                    Log.d("SUCCESS: ", o.toString());
-                    finish();
 
-                } else{
-                    Log.e("ERROR: ", e.getMessage());
-                }
-            }
-        });
-    }
 
-    /*private void customDateSet(){
-        if(dialogDate != null){
-            dialogDate.dismiss();
-        }
-        calendarDate = Calendar.getInstance();
-        calendarDate.set(year,monthOfYear,dayOfMonth);
-
-        dialogTime = TimeDialogFragment.newInstance("","");
-        dialogTime.setCancelable(false);
-        dialogTime.show(getSupportFragmentManager(), "dialogTime");
-    }*/
 }
