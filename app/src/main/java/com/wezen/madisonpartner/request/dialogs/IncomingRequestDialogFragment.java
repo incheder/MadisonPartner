@@ -27,7 +27,7 @@ public class IncomingRequestDialogFragment extends DialogFragment {
     private boolean mParamCancelButton;
 
     public interface OnClickIncomingRequestDialog {
-        void onPositiveButtonClicked();
+        void onPositiveButtonClicked(String date);
         void onNegativeButtonClicked();
     }
 
@@ -89,7 +89,7 @@ public class IncomingRequestDialogFragment extends DialogFragment {
                 .setMessage(message)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mListener.onPositiveButtonClicked();
+                        mListener.onPositiveButtonClicked(mParamCancelButton ? mParamMessage : null);
                     }
                 });
                 if(mParamCancelButton){

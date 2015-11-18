@@ -35,6 +35,7 @@ import com.wezen.madisonpartner.employees.EmployeeListActivity;
 import com.wezen.madisonpartner.request.dialogs.DateDialogFragment;
 import com.wezen.madisonpartner.request.dialogs.IncomingRequestDialogFragment;
 import com.wezen.madisonpartner.request.dialogs.TimeDialogFragment;
+import com.wezen.madisonpartner.utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -60,6 +61,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     private DateDialogFragment dialogDate;
     private TimeDialogFragment dialogTime;
     private IncomingRequestDialogFragment dialogRequest;
+    private boolean isCancelled = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,13 +165,14 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                 dialogDate = DateDialogFragment.newInstance("", "");
                 dialogDate.setCancelable(false);
                 dialogDate.show(getSupportFragmentManager(), "dialogDate");
+
             }
         });
         decline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(IncomingRequestActivity.this, "decline", Toast.LENGTH_SHORT).show();
-                sendPushToClient();
+                //sendPushToClient();
             }
         });
 
@@ -177,54 +180,70 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
 
     @Override
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        if(dialogDate != null){
-            dialogDate.dismiss();
-        }
-        calendarDate = Calendar.getInstance();
-        calendarDate.set(year,monthOfYear,dayOfMonth);
+        //if(!isCancelled || !Utils.isAffectedVersion()){
+            if(dialogDate != null){
+                dialogDate.dismiss();
+            }
+            isCancelled = false;
+            calendarDate = Calendar.getInstance();
+            calendarDate.set(year, monthOfYear, dayOfMonth);
 
-        dialogTime = TimeDialogFragment.newInstance("","");
-        dialogTime.setCancelable(false);
-        dialogTime.show(getSupportFragmentManager(), "dialogTime");
+            dialogTime = TimeDialogFragment.newInstance("","");
+            dialogTime.setCancelable(false);
+            dialogTime.show(getSupportFragmentManager(), "dialogTime");
+       /* } else {
+            isCancelled = false;
+            enableButtons();
+        }*/
+
     }
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        if(dialogTime!=null){
-            dialogTime.dismiss();
+        if(!isCancelled || !Utils.isAffectedVersion()){
+
+            if(dialogTime!=null){
+                dialogTime.dismiss();
+            }
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
+            calendar.set(Calendar.MINUTE,minute);
+            calendar.set(Calendar.YEAR, calendarDate.get(Calendar.YEAR));
+            calendar.set(Calendar.MONTH, calendarDate.get(Calendar.MONTH));
+            calendar.set(Calendar.DAY_OF_MONTH, calendarDate.get(Calendar.DAY_OF_MONTH));
+
+            Date timeToAttend = calendar.getTime();
+            String message = getResources().getString(R.string.invalid_date);
+            String title = getResources().getString(R.string.choose_another_date);
+            boolean showCancel = false;
+
+            if(!timeToAttend.before(new Date())){
+                message = dateFormat.format(timeToAttend);
+                title = getResources().getString(R.string.incoming_request_dialog_title);
+                showCancel = true;
+            }
+
+            dialogRequest = IncomingRequestDialogFragment.newInstance(message,title,showCancel);
+            dialogRequest.setCancelable(false);
+            dialogRequest.show(getSupportFragmentManager(), "dialogRequest");
+
+        }else {
+            isCancelled = false;
+            enableButtons();
         }
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
-        calendar.set(Calendar.MINUTE,minute);
-        calendar.set(Calendar.YEAR, calendarDate.get(Calendar.YEAR));
-        calendar.set(Calendar.MONTH, calendarDate.get(Calendar.MONTH));
-        calendar.set(Calendar.DAY_OF_MONTH, calendarDate.get(Calendar.DAY_OF_MONTH));
-
-        Date timeToAttend = calendar.getTime();
-        String message = getResources().getString(R.string.invalid_date);
-        String title = getResources().getString(R.string.choose_another_date);
-        boolean showCancel = false;
-
-        if(!timeToAttend.before(new Date())){
-            message = dateFormat.format(timeToAttend);
-            title = getResources().getString(R.string.incoming_request_dialog_title);
-            showCancel = true;
-        }
-
-        dialogRequest = IncomingRequestDialogFragment.newInstance(message,title,showCancel);
-        dialogRequest.setCancelable(false);
-        dialogRequest.show(getSupportFragmentManager(), "dialogRequest");
 
     }
 
     @Override
-    public void onPositiveButtonClicked() {
+    public void onPositiveButtonClicked(String date) {
         if(dialogRequest!= null){
             dialogRequest.dismiss();
         }
         enableButtons();
         //TODO crear cloud function para mandar el push al usuario que solicito el servicio, si un asistente realizará el servicio enviarle un push tambien
-        sendPushToClient();
+        if(date != null){
+            sendPushToClient(date);
+        }
     }
 
     @Override
@@ -235,7 +254,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     @Override
     public void onClick(DialogInterface dialog, int which) {
         enableButtons();
-
+        isCancelled = which == DialogInterface.BUTTON_NEGATIVE /*&& Utils.isAffectedVersion()*/;
     }
 
     private void enableButtons(){
@@ -256,19 +275,33 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         }
     }
 
-    private void sendPushToClient(){
-        Map<String,Object> params = new HashMap<String, Object>();
+    private void sendPushToClient(String date){
+        Map<String,Object> params = new HashMap<>();
         params.put("client",incomingRequest.getUserID());
-        params.put("date","10/10/10");
+        params.put("date",date);
         ParseCloud.callFunctionInBackground("sendPushToClient", params, new FunctionCallback<Object>() {
             @Override
             public void done(Object o, ParseException e) {
                 if(e == null){
                     Log.d("SUCCESS: ", o.toString());
+                    finish();
+
                 } else{
                     Log.e("ERROR: ", e.getMessage());
                 }
             }
         });
     }
+
+    /*private void customDateSet(){
+        if(dialogDate != null){
+            dialogDate.dismiss();
+        }
+        calendarDate = Calendar.getInstance();
+        calendarDate.set(year,monthOfYear,dayOfMonth);
+
+        dialogTime = TimeDialogFragment.newInstance("","");
+        dialogTime.setCancelable(false);
+        dialogTime.show(getSupportFragmentManager(), "dialogTime");
+    }*/
 }

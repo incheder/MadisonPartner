@@ -108,6 +108,7 @@ public class RequestListFragment extends Fragment {
                     requestList.clear();
                     for (ParseObject po : list) {
                         HomeServiceRequest request = new HomeServiceRequest();
+                        request.setId(po.getObjectId());
                         request.setLocation(new LatLng(po.getParseGeoPoint("userLocation").getLatitude(), po.getParseGeoPoint("userLocation").getLongitude()));
                         request.setName(po.getParseObject("user").getString("username"));
                         request.setDescription(po.getString("problemDescription"));

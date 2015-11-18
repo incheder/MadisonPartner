@@ -7,6 +7,7 @@ import com.google.android.gms.maps.model.LatLng;
  */
 public class HomeServiceRequest {
 
+    private String id;
     private String userAvatar;
     private String name;
     private String description;
@@ -96,5 +97,13 @@ public class HomeServiceRequest {
 
     public void setUserID(String userID) {
         this.userID = userID;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

@@ -4,13 +4,16 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.DatePicker;
 
 import com.wezen.madisonpartner.R;
+import com.wezen.madisonpartner.utils.Utils;
 
 import java.util.Calendar;
 
@@ -75,10 +78,37 @@ public class DateDialogFragment extends DialogFragment{
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
-        DatePickerDialog datePickerDialog =  new DatePickerDialog(getActivity(),mListener,year,month,day);
+        /*DatePickerDialog datePickerDialog =  new DatePickerDialog(getActivity(),null,year,month,day);
         datePickerDialog.setTitle(R.string.choose_a_date);
-        datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.no), cancelListener);
-        return datePickerDialog;
+        datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.no), cancelListener);*/
+
+        final DatePickerDialog picker = new DatePickerDialog(getActivity(),
+                getConstructorListener(), year, month, day);
+        picker.setTitle(R.string.choose_a_date);
+        if (Utils.isAffectedVersion()) {
+            picker.setButton(DialogInterface.BUTTON_POSITIVE,
+                    getActivity().getString(android.R.string.ok),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            DatePicker dp = picker.getDatePicker();
+                            mListener.onDateSet(dp,
+                                    dp.getYear(), dp.getMonth(), dp.getDayOfMonth());
+                        }
+                    });
+        }
+
+            picker.setButton(DialogInterface.BUTTON_NEGATIVE,
+                    getActivity().getString(android.R.string.cancel),
+                    cancelListener);
+      //  }
+
+        return picker;
+    }
+
+
+    private DatePickerDialog.OnDateSetListener getConstructorListener() {
+        return Utils.isAffectedVersion() ? null : mListener;
     }
 
 }

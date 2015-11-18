@@ -1,6 +1,7 @@
 package com.wezen.madisonpartner.request;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,6 +20,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.Picasso;
 import com.wezen.madisonpartner.R;
+
+import org.json.JSONException;
 
 import java.util.List;
 
@@ -68,7 +71,10 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
             holder.accept.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //  ((RequestHolder) context).showBottomSheet(position);
+                    Intent incomingRequest = new Intent(context,IncomingRequestActivity.class);
+                    incomingRequest.putExtra(IncomingRequestActivity.REQUEST_ID,item.getId());
+                   // incomingRequest.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(incomingRequest);
                 }
             });
 
