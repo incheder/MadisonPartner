@@ -50,4 +50,7 @@
     <string name="order_sent">La notificaión fue enviada al cliente</string>
     <string name="back">Volver</string>
     <string name="drawer_menu_logout">Cerrar Sesión</string>
+    <string name="network_not_available">Necesitas una conexión a internet para usar la aplicación</string>
+    <string name="network_dialog_title">Sin Conexión</string>
+    <string name="try_again">Intentar de nuevo</string>
 </resources>

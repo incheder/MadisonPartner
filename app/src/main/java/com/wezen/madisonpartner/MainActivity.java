@@ -23,8 +23,9 @@ import com.wezen.madisonpartner.home.ViewPagerAdapter;
 import com.wezen.madisonpartner.information.InformationFragment;
 import com.wezen.madisonpartner.login.LoginActivity;
 import com.wezen.madisonpartner.request.RequestListFragment;
+import com.wezen.madisonpartner.utils.DialogActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends DialogActivity {
 
     private NavigationView navigationView;
     private String userName;
