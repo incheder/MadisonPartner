@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.flipboard.bottomsheet.BottomSheetLayout;
@@ -59,6 +60,7 @@ public class InformationFragment extends Fragment {
     private RecyclerView recyclerViewAvailables;
     private View bottomSheetLayout;
     private ParseObject business;
+    private ProgressBar progressBar;
 
     /**
      * Use this factory method to create a new instance of
@@ -97,7 +99,7 @@ public class InformationFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_information, container, false);
         bottomSheet = (BottomSheetLayout)view.findViewById(R.id.bottomsheet);
-
+        progressBar = (ProgressBar)view.findViewById(R.id.progressBarInformation);
         buttonCategories = (Button)view.findViewById(R.id.buttonCategories);
         rvCategories = (RecyclerView)view.findViewById(R.id.recyclerViewBusinessCategories);
         layoutManager = new org.solovyev.android.views.llm.LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
@@ -127,6 +129,7 @@ public class InformationFragment extends Fragment {
         queryServices.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
+                progressBar.setVisibility(View.GONE);
                 if (e == null) {
                     business = parseObject;
                     saveInstallationData(parseObject);

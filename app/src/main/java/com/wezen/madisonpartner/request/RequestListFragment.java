@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.parse.FindCallback;
@@ -39,6 +40,7 @@ public class RequestListFragment extends Fragment {
 
     private List<HomeServiceRequest> requestList;
     private RequestAdapter adapter;
+    private ProgressBar progressBar;
 
     /**
      * Use this factory method to create a new instance of
@@ -78,6 +80,7 @@ public class RequestListFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_request_list, container, false);
         AutofitRecyclerView recyclerViewRequestList = (AutofitRecyclerView)view.findViewById(R.id.recyclerViewRequestList);
+        progressBar = (ProgressBar)view.findViewById(R.id.progressBarRequestList);
         recyclerViewRequestList.setHasFixedSize(true);
         requestList = new ArrayList<>();
         adapter = new RequestAdapter(requestList,getActivity());
@@ -104,6 +107,7 @@ public class RequestListFragment extends Fragment {
         queryRequest.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
+                progressBar.setVisibility(View.GONE);
                 if (e == null) {
                     requestList.clear();
                     for (ParseObject po : list) {
@@ -123,6 +127,7 @@ public class RequestListFragment extends Fragment {
 
                     adapter.notifyDataSetChanged();
                 } else { // ups
+                    //TODO mostrar algun mensaje de error con una imagen coqueta
 
                 }
             }

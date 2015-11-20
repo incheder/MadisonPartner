@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -63,6 +64,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     private TimeDialogFragment dialogTime;
     private IncomingRequestDialogFragment dialogRequest;
     private boolean isCancelled = false;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +79,8 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         if(getIntent().getExtras() != null){
             id = getIntent().getStringExtra(REQUEST_ID);
         }
+
+        progressBar = (ProgressBar)findViewById(R.id.progressBarIncomingRequest);
 
         map = (MapView)findViewById(R.id.incomming_request_map);
         map.setClickable(false);
@@ -118,6 +122,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         query.getInBackground(id, new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject po, ParseException e) {
+                progressBar.setVisibility(View.GONE);
                 if (e == null) {
                     incomingRequest = new HomeServiceRequest();
                     incomingRequest.setLocation(new LatLng(po.getParseGeoPoint("userLocation").getLatitude(), po.getParseGeoPoint("userLocation").getLongitude()));
