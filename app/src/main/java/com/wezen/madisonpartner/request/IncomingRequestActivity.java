@@ -135,6 +135,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                     incomingRequest.setUserAvatar(po.getParseObject("user").getParseFile("userImage").getUrl());
                     incomingRequest.setAddress(po.getString("address"));
                     incomingRequest.setUserID(po.getParseObject("user").getObjectId());
+                    incomingRequest.setProviderName(po.getParseObject("homeService").getString("name"));
                     setData(incomingRequest);
 
 
@@ -251,6 +252,8 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             Intent intent = new Intent(this, SendingNotificationActivity.class);
             intent.putExtra(SendingNotificationActivity.DATE,date);
             intent.putExtra(SendingNotificationActivity.ID,incomingRequest.getUserID());
+            intent.putExtra(SendingNotificationActivity.HOME_SERVICE_REQUEST_ID, id);
+            intent.putExtra(SendingNotificationActivity.HOME_SERVICE_NAME,incomingRequest.getProviderName());
             startActivity(intent);
 
         }
