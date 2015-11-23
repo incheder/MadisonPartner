@@ -53,6 +53,7 @@ public class SendingNotificationActivity extends AppCompatActivity {
             date =  getIntent().getStringExtra(DATE);
             requestId = getIntent().getStringExtra(HOME_SERVICE_REQUEST_ID);
             name = getIntent().getStringExtra(HOME_SERVICE_NAME);
+            requestId = getIntent().getStringExtra(HOME_SERVICE_REQUEST_ID);
         }
 
 
@@ -108,20 +109,36 @@ public class SendingNotificationActivity extends AppCompatActivity {
 
     private void updateHomeServiceRequestStatus(){
         ParseQuery<ParseObject> query = ParseQuery.getQuery("HomeServiceRequest");
-        query.getInBackground(id, new GetCallback<ParseObject>() {
+        query.getInBackground(requestId, new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
-                if(e == null && parseObject != null){
-                    parseObject.put("status", HomeServiceRequestStatus.ASIGNADO);
+                progressBar.setVisibility(View.GONE);
+                orderSent.setVisibility(View.VISIBLE);
+                if (e == null && parseObject != null) {
+                    parseObject.put("status", HomeServiceRequestStatus.ASIGNADO.getValue());
                     parseObject.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
                             //el status se actulizó mandamos el push al cliente
-                            sendPushToClient(date,id,name);
+                            if(e==null){
+                                sendPushToClient(date, id, name);
+                            } else {
+                                //no se actualizo
+                                Log.e("ERROR: ", e != null ? e.getMessage() : null);
+                                TextView textViewOrderSent = (TextView) orderSent.findViewById(R.id.textview_notification);
+                                if (textViewOrderSent != null) {
+                                    textViewOrderSent.setText(getResources().getString(R.string.order_not_sent));
+                                }
+                            }
                         }
                     });
                 } else {
                     //TODO mostrar mensaje de error en el textview
+                    Log.e("ERROR: ", e != null ? e.getMessage() : null);
+                    TextView textViewOrderSent = (TextView) orderSent.findViewById(R.id.textview_notification);
+                    if (textViewOrderSent != null) {
+                        textViewOrderSent.setText(getResources().getString(R.string.request_not_updated));
+                    }
                 }
 
 
