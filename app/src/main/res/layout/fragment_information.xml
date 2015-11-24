@@ -28,55 +28,125 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/activity_horizontal_margin">
+               >
 
-                <android.support.design.widget.TextInputLayout
+                <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/image_business_height"
+                    android:id="@+id/imageViewBusiness"
+                    android:scaleType="centerCrop"
                     android:layout_marginBottom="@dimen/elements_margin"
-                    android:id="@+id/business_name">
-
-                    <EditText
-                        android:id="@+id/editTextBusinessName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/business_name"
-                        />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/business_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/elements_margin"
-                    android:layout_below="@+id/business_name">
-
-                    <EditText
-                        android:id="@+id/editTextBusinessDescription"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/business_description"
-                        />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <Button
-                    android:id="@+id/buttonCategories"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/choose_categories"
-                    android:layout_below="@+id/business_description"
-                    style="?android:attr/borderlessButtonStyle"
                     />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerViewBusinessCategories"
+                <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/buttonCategories"
+                    android:layout_below="@+id/imageViewBusiness"
+                    android:layout_marginBottom="@dimen/elements_margin"
+                    android:layout_marginLeft="@dimen/elements_margin"
+                    android:layout_marginRight="@dimen/elements_margin"
 
-                    />
+                    app:cardCornerRadius="4dp"
+                    android:id="@+id/informationCardText"
+                   >
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="@dimen/activity_horizontal_margin">
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/elements_margin"
+                            android:id="@+id/business_name"
+                           >
+
+                            <EditText
+                                android:id="@+id/editTextBusinessName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/business_name"
+                                />
+
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/business_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/elements_margin"
+                            android:layout_below="@+id/business_name"
+                           >
+
+                            <EditText
+                                android:id="@+id/editTextBusinessDescription"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/business_description"
+                                />
+
+                        </android.support.design.widget.TextInputLayout>
+
+                    </RelativeLayout>
+
+
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/informationCardText"
+                    android:layout_marginBottom="@dimen/elements_margin"
+                    app:cardCornerRadius="4dp"
+                    android:layout_marginLeft="@dimen/elements_margin"
+                    android:layout_marginRight="@dimen/elements_margin"
+                   >
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/activity_horizontal_margin">
+
+                        <TextView
+                            android:id="@+id/labelCategories"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/current_categories"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+
+                            />
+
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/recyclerViewBusinessCategories"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/labelCategories"
+
+                            />
+
+
+                        <Button
+                            android:id="@+id/buttonCategories"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/choose_categories"
+                            android:textColor="@color/accent"
+                            android:layout_below="@+id/recyclerViewBusinessCategories"
+                            style="?android:attr/borderlessButtonStyle"
+                            android:visibility="gone"
+                            />
+
+
+                    </RelativeLayout>
+
+
+                </android.support.v7.widget.CardView>
+
+
+
+
 
             </RelativeLayout>
 

@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.squareup.picasso.Picasso;
 import com.wezen.madisonpartner.R;
 import com.wezen.madisonpartner.information.bottomsheet.CategoriesAdapter;
 
@@ -61,6 +63,7 @@ public class InformationFragment extends Fragment {
     private View bottomSheetLayout;
     private ParseObject business;
     private ProgressBar progressBar;
+    private ImageView businessImage;
 
     /**
      * Use this factory method to create a new instance of
@@ -116,6 +119,9 @@ public class InformationFragment extends Fragment {
             }
         });
 
+        businessImage = (ImageView)view.findViewById(R.id.imageViewBusiness);
+
+
 
         getBusinessInformation();
 
@@ -135,6 +141,10 @@ public class InformationFragment extends Fragment {
                     saveInstallationData(parseObject);
                     editTextName.setText(parseObject.getString("name"));
                     editTextDescription.setText(parseObject.getString("description"));
+                    if(parseObject.getParseFile("image") != null){
+                        Picasso.with(getActivity()).load((parseObject.getParseFile("image").getUrl())).into(businessImage);
+                    }
+
                     List<ParseObject> list = parseObject.getList("Category");
                     currentCategories = new ArrayList<>();
                     List<String> names = new ArrayList<>();

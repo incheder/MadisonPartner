@@ -13,5 +13,6 @@
     <dimen name="bottomsheet_image_width">40dp</dimen>
     <dimen name="bottomsheet_image_height">40dp</dimen>
     <dimen name="order_sent_margin_image">10dp</dimen>
+    <dimen name="image_business_height">200dp</dimen>
 
 </resources>
