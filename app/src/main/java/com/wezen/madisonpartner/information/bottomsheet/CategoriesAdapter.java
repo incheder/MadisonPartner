@@ -25,14 +25,17 @@ public class CategoriesAdapter extends
 	private List<Category> categories;
 	private Context context;
 	private InformationFragment informationFragment;
-	private boolean isBottomSheet;
+	private boolean isAdding;
+	private boolean isDynamic;
 
 
-	public CategoriesAdapter(List<Category> categories, Context context,InformationFragment informationFragment,boolean isBottomSheet) {
+	public CategoriesAdapter(List<Category> categories, Context context,InformationFragment informationFragment,boolean isAdding, boolean isDynamic) {
 		this.categories = categories;
 		this.context = context;
 		this.informationFragment = informationFragment;
-		this.isBottomSheet = isBottomSheet;
+		this.isAdding = isAdding;
+		this.isDynamic = isDynamic;
+
 	}
 
 	public static class CategoryBottomSheetViewHolder extends ViewHolder {
@@ -65,11 +68,13 @@ public class CategoriesAdapter extends
 		holder.row.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(isBottomSheet){
-					informationFragment.addCategory(item);
-				} else {
-					removeAt(position);
-					informationFragment.removeCategory(item);
+				if(isDynamic){
+					if(isAdding){
+						informationFragment.addCategory(item, position);
+					} else {
+						//removeAt(position);
+						informationFragment.removeCategory(item,position);
+					}
 				}
 			}
 		});

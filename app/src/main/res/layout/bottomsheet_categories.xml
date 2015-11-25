@@ -7,10 +7,10 @@
     android:padding="@dimen/bottomsheet_elements_margin">
 
     <TextView
+        android:id="@+id/textViewBottomSheetTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/choose_your_category"
         android:layout_marginTop="@dimen/bottomsheet_elements_margin"
         android:layout_marginBottom="@dimen/bottomsheet_elements_margin"
         android:textColor="@android:color/tertiary_text_light"/>

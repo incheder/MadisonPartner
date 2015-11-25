@@ -55,4 +55,9 @@
     <string name="try_again">Intentar de nuevo</string>
     <string name="current_categories">Categorías actuales</string>
     <string name="request_not_updated">Hubo un problema al enviar la información. Por favor vuelve a intentarlo</string>
+    <string name="add_categories">Agregar categorías</string>
+    <string name="delete_categories">Eliminar categorías</string>
+    <string name="no_more_categories_to_add">No hay más categorías por agregar</string>
+    <string name="delete_your_category">Elige la categoría que deseas eliminar</string>
+    <string name="no_more_categories_to_delete">No hay más categorías por eliminar</string>
 </resources>

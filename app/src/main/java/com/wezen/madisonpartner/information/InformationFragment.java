@@ -7,16 +7,19 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.flipboard.bottomsheet.BottomSheetLayout;
@@ -64,6 +67,8 @@ public class InformationFragment extends Fragment {
     private ParseObject business;
     private ProgressBar progressBar;
     private ImageView businessImage;
+    private ImageView adminCategories;
+
 
     /**
      * Use this factory method to create a new instance of
@@ -120,6 +125,9 @@ public class InformationFragment extends Fragment {
         });
 
         businessImage = (ImageView)view.findViewById(R.id.imageViewBusiness);
+        adminCategories = (ImageView)view.findViewById(R.id.imageViewAdminCategories);
+
+
 
 
 
@@ -158,7 +166,7 @@ public class InformationFragment extends Fragment {
                         category.setSecondaryColor("secondaryColor");
                         currentCategories.add(category);
                     }
-                    currentAdapter = new CategoriesAdapter(currentCategories, getActivity(), InformationFragment.this, false);
+                    currentAdapter = new CategoriesAdapter(currentCategories, getActivity(), InformationFragment.this, false, false);
                     rvCategories.setAdapter(currentAdapter);
 
                     getAvailableCategories(names);
@@ -189,8 +197,7 @@ public class InformationFragment extends Fragment {
                         category.setSecondaryColor("secondaryColor");
                         availableCategories.add(category);
                     }
-
-                    buttonCategories.setOnClickListener(new MyOnClickListener(bottomSheet));
+                    adminCategories.setOnClickListener(new MyOnClickListener());
                 } else {
                     Log.e("ERROR", e.getMessage());
                 }
@@ -202,49 +209,52 @@ public class InformationFragment extends Fragment {
 
 
     private class MyOnClickListener implements View.OnClickListener {
-        private final BottomSheetLayout bottomSheet;
-
-
-        public MyOnClickListener(BottomSheetLayout bottomSheet) {
-            this.bottomSheet = bottomSheet;
-
-        }
 
         @Override
         public void onClick(View v) {
-            if(availableCategories.size() >  0){
-                if(bottomSheetLayout == null){
-                    bottomSheetLayout = LayoutInflater.from(getActivity()).inflate(R.layout.bottomsheet_categories, bottomSheet, false);
-                }
-                bottomSheet.showWithSheetView(bottomSheetLayout);
-                if(recyclerViewAvailables == null){
-                    recyclerViewAvailables = (RecyclerView)bottomSheetLayout.findViewById(R.id.recyclerViewCategories);
-                    layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-                    recyclerViewAvailables.setLayoutManager(layoutManager);
-                }
-                //TODO usar notifydatasetchanged en vez de crear nuevos adapter , reusar layoutmanager
-                if(availableAdapter == null){
-                    availableAdapter = new CategoriesAdapter(availableCategories,getActivity(),InformationFragment.this,true);
-                    recyclerViewAvailables.setAdapter(availableAdapter);
-                } else{
-                    availableAdapter.notifyDataSetChanged();
-                }
+            PopupMenu popupMenu = new PopupMenu(getActivity(),adminCategories);
+            popupMenu.getMenuInflater().inflate(R.menu.popup_menu_categories,popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    int id = item.getItemId();
+                    switch (id) {
+                        case R.id.popup_menu_add_categeories:
+                            showBottomSheet(availableCategories,true);
+                            break;
+                        case R.id.popup_menu_delete_categories:
+                            showBottomSheet(currentCategories,false);
+                            break;
+                    }
 
-            }
+                    return true;
+                }
+            });
+            popupMenu.show();
         }
     }
 
-    public void addCategory(Category category){
+    public void addCategory(Category category,int position){
         bottomSheet.dismissSheet();
-        currentCategories.add(category);
-        currentAdapter.notifyDataSetChanged();
+        currentCategories.add(0, category);
+        //currentAdapter.notifyDataSetChanged();
+
+        currentAdapter.notifyItemInserted(position);
+        currentAdapter.notifyItemRangeChanged(position, currentCategories.size());
         availableCategories.remove(category);
         availableAdapter.notifyDataSetChanged();
 
     }
 
-    public void removeCategory(Category category){
+    public void removeCategory(Category category,int position){
+        bottomSheet.dismissSheet();
+        currentCategories.remove(category);
+        //currentAdapter.notifyDataSetChanged();
+        currentAdapter.notifyItemRemoved(position);
+        currentAdapter.notifyItemRangeChanged(position, currentCategories.size());
         availableCategories.add(category);
+        availableAdapter.notifyDataSetChanged();
+
 
 
     }
@@ -284,7 +294,6 @@ public class InformationFragment extends Fragment {
                 categoriesList.add(po);
             }
             business.put("Category",categoriesList);
-            //business.addAllUnique("Category",categoriesList);
             business.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
@@ -312,6 +321,39 @@ public class InformationFragment extends Fragment {
         }
 
         return isValid;
+    }
+
+    private void showBottomSheet(List<Category> listCat, boolean isAdding){
+        if(listCat.size() >  0){
+            if(bottomSheetLayout == null){
+                bottomSheetLayout = LayoutInflater.from(getActivity()).inflate(R.layout.bottomsheet_categories, bottomSheet, false);
+            }
+            bottomSheet.showWithSheetView(bottomSheetLayout);
+            TextView title = (TextView)bottomSheet.findViewById(R.id.textViewBottomSheetTitle);
+            if(isAdding){
+                title.setText(R.string.choose_your_category);
+            } else {
+                title.setText(R.string.delete_your_category);
+
+            }
+            if(recyclerViewAvailables == null){
+                recyclerViewAvailables = (RecyclerView)bottomSheetLayout.findViewById(R.id.recyclerViewCategories);
+                layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+                recyclerViewAvailables.setLayoutManager(layoutManager);
+            }
+            //TODO usar notifydatasetchanged en vez de crear nuevos adapter , reusar layoutmanager
+            //if(availableAdapter == null){
+                availableAdapter = new CategoriesAdapter(listCat,getActivity(),InformationFragment.this,isAdding,true);
+                recyclerViewAvailables.setAdapter(availableAdapter);
+           // } else{
+             //   availableAdapter.notifyDataSetChanged();
+            //}
+
+        }
+        else {
+            String message = isAdding ? getResources().getString(R.string.no_more_categories_to_add) : getResources().getString(R.string.no_more_categories_to_delete);
+            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
