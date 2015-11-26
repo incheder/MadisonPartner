@@ -60,4 +60,5 @@
     <string name="no_more_categories_to_add">No hay más categorías por agregar</string>
     <string name="delete_your_category">Elige la categoría que deseas eliminar</string>
     <string name="no_more_categories_to_delete">No hay más categorías por eliminar</string>
+    <string name="save_business_image">Cambiar imagen</string>
 </resources>

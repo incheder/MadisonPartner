@@ -55,7 +55,7 @@ public class InformationFragment extends Fragment {
     private EditText editTextName;
     private EditText editTextDescription;
     private LinearLayoutManager layoutManager;
-    private Button buttonCategories;
+    private Button buttonSaveImage;
     private BottomSheetLayout bottomSheet;
     private List<Category> availableCategories;
     private List<Category> currentCategories;
@@ -108,7 +108,7 @@ public class InformationFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_information, container, false);
         bottomSheet = (BottomSheetLayout)view.findViewById(R.id.bottomsheet);
         progressBar = (ProgressBar)view.findViewById(R.id.progressBarInformation);
-        buttonCategories = (Button)view.findViewById(R.id.buttonCategories);
+        buttonSaveImage = (Button)view.findViewById(R.id.buttonSaveBusinessImage);
         rvCategories = (RecyclerView)view.findViewById(R.id.recyclerViewBusinessCategories);
         layoutManager = new org.solovyev.android.views.llm.LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         rvCategories.setLayoutManager(layoutManager);
@@ -127,13 +127,35 @@ public class InformationFragment extends Fragment {
         businessImage = (ImageView)view.findViewById(R.id.imageViewBusiness);
         adminCategories = (ImageView)view.findViewById(R.id.imageViewAdminCategories);
 
-
-
-
+        buttonSaveImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateBusinessImage();
+            }
+        });
 
         getBusinessInformation();
 
         return view;
+    }
+
+    private void updateBusinessImage() {
+        ParseQuery<ParseObject> queryServices = ParseQuery.getQuery("HomeServices");
+        queryServices.whereEqualTo("serviceProvider", ParseUser.getCurrentUser());
+        queryServices.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject parseObject, ParseException e) {
+                if(e == null){
+                    if(parseObject!= null){
+                        //TODO save new image
+                    } else {
+                        //TODO handle error
+                    }
+                } else {
+                    //TODO handle error
+                }
+            }
+        });
     }
 
     private void getBusinessInformation() {

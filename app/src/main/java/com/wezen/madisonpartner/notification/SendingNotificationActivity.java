@@ -17,6 +17,7 @@ import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.wezen.madisonpartner.MainActivity;
 import com.wezen.madisonpartner.R;
@@ -55,9 +56,6 @@ public class SendingNotificationActivity extends AppCompatActivity {
             name = getIntent().getStringExtra(HOME_SERVICE_NAME);
             requestId = getIntent().getStringExtra(HOME_SERVICE_REQUEST_ID);
         }
-
-
-        //sendPushToClient(date,id,name);
         updateHomeServiceRequestStatus();
 
     }
@@ -116,15 +114,16 @@ public class SendingNotificationActivity extends AppCompatActivity {
                 orderSent.setVisibility(View.VISIBLE);
                 if (e == null && parseObject != null) {
                     parseObject.put("status", HomeServiceRequestStatus.ASIGNADO.getValue());
+                    parseObject.put("attendedBy", ParseUser.getCurrentUser());//TODO if the current user is admin, he can choose an employee to attend the request
                     parseObject.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
                             //el status se actulizó mandamos el push al cliente
-                            if(e==null){
+                            if (e == null) {
                                 sendPushToClient(date, id, name);
                             } else {
-                                //no se actualizo
-                                Log.e("ERROR: ", e != null ? e.getMessage() : null);
+                                //no se actualizó
+                                Log.e("ERROR: ", e.getMessage());
                                 TextView textViewOrderSent = (TextView) orderSent.findViewById(R.id.textview_notification);
                                 if (textViewOrderSent != null) {
                                     textViewOrderSent.setText(getResources().getString(R.string.order_not_sent));

@@ -15,12 +15,6 @@ public class IncomingRequestBroadcastReceiver extends com.parse.ParsePushBroadca
 
     private static final String PARSE_INCOMING_REQUEST = "homeServiceRequest";
 
-    /*@Override
-    protected Class<? extends Activity> getActivity(Context context, Intent intent) {
-        //return super.getActivity(context, intent);
-        return IncomingRequestActivity.class;
-    }*/
-
     @Override
     protected void onPushOpen(Context context, Intent intent) {
         //super.onPushOpen(context, intent);
@@ -33,12 +27,6 @@ public class IncomingRequestBroadcastReceiver extends com.parse.ParsePushBroadca
         }
         incomingRequest.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(incomingRequest);
-    }
-
-    @Override
-    protected void onPushReceive(Context context, Intent intent) {
-        super.onPushReceive(context, intent);
-       // getDataFromIntent(intent);
     }
 
     private JSONObject getDataFromIntent(Intent intent) {
