@@ -1,9 +1,15 @@
 package com.wezen.madisonpartner.information;
 
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +32,7 @@ import com.flipboard.bottomsheet.BottomSheetLayout;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -34,7 +41,11 @@ import com.parse.SaveCallback;
 import com.squareup.picasso.Picasso;
 import com.wezen.madisonpartner.R;
 import com.wezen.madisonpartner.information.bottomsheet.CategoriesAdapter;
+import com.wezen.madisonpartner.request.dialogs.IncomingRequestDialogFragment;
+import com.wezen.madisonpartner.utils.ImagePicker;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +79,8 @@ public class InformationFragment extends Fragment {
     private ProgressBar progressBar;
     private ImageView businessImage;
     private ImageView adminCategories;
+    private final static int PICK_IMAGE_REQUEST = 1;
+    private Bitmap businessBitmap;
 
 
     /**
@@ -130,7 +143,13 @@ public class InformationFragment extends Fragment {
         buttonSaveImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateBusinessImage();
+                //updateBusinessImage();
+                /*SelectImageDialogFragment dialogRequest = SelectImageDialogFragment.newInstance(getActivity().getResources().getString(R.string.select_image_title));
+                dialogRequest.setCancelable(true);
+                dialogRequest.show(getActivity().getSupportFragmentManager(), "dialogSelectImage");*/
+                Intent chooseImageIntent = ImagePicker.getPickImageIntent(getActivity());
+                startActivityForResult(chooseImageIntent, PICK_IMAGE_REQUEST);
+
             }
         });
 
@@ -145,8 +164,8 @@ public class InformationFragment extends Fragment {
         queryServices.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
-                if(e == null){
-                    if(parseObject!= null){
+                if (e == null) {
+                    if (parseObject != null) {
                         //TODO save new image
                     } else {
                         //TODO handle error
@@ -171,7 +190,7 @@ public class InformationFragment extends Fragment {
                     saveInstallationData(parseObject);
                     editTextName.setText(parseObject.getString("name"));
                     editTextDescription.setText(parseObject.getString("description"));
-                    if(parseObject.getParseFile("image") != null){
+                    if (parseObject.getParseFile("image") != null) {
                         Picasso.with(getActivity()).load((parseObject.getParseFile("image").getUrl())).into(businessImage);
                     }
 
@@ -287,7 +306,7 @@ public class InformationFragment extends Fragment {
         if(highScore == 0){
             ParseInstallation installation = ParseInstallation.getCurrentInstallation();
             ParseObject hs = ParseObject.createWithoutData("HomeServices",homeService.getObjectId());
-            installation.put("homeService",homeService);
+            installation.put("homeService", homeService);
             installation.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
@@ -315,18 +334,26 @@ public class InformationFragment extends Fragment {
                 ParseObject po = ParseObject.createWithoutData("Categories",category.getId());
                 categoriesList.add(po);
             }
-            business.put("Category",categoriesList);
-            business.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if (e == null) {
-                        Toast.makeText(getActivity(), R.string.data_saved, Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getActivity(), R.string.data_not_saved, Toast.LENGTH_SHORT).show();
-                        Log.e("ERROR", e.getMessage());
+            business.put("Category", categoriesList);
+            if(businessBitmap != null){
+                final ParseFile pf = new ParseFile("business_image.jpeg",bitmapToByteArray(businessBitmap));
+                pf.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if(e == null){
+                            completeBusinessInfoSavingProcess(pf);
+                        } else {
+                            Log.e("ERROR",e.getMessage());
+                            Toast.makeText(getActivity(), R.string.image_not_saved, Toast.LENGTH_SHORT).show();
+                            //we try to save the rest of the data
+                            completeBusinessInfoSavingProcess(null);
+                        }
                     }
-                }
-            });
+                });
+            }else {
+                completeBusinessInfoSavingProcess(null);
+            }
+
         }
 
     }
@@ -376,6 +403,52 @@ public class InformationFragment extends Fragment {
             String message = isAdding ? getResources().getString(R.string.no_more_categories_to_add) : getResources().getString(R.string.no_more_categories_to_delete);
             Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void launchGallery(){
+
+        Intent chooseImageIntent = ImagePicker.getPickImageIntent(getActivity());
+        startActivityForResult(chooseImageIntent, PICK_IMAGE_REQUEST);
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch(requestCode) {
+            case PICK_IMAGE_REQUEST:
+                businessBitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
+                // TODO use bitmap
+                businessImage.setImageBitmap(businessBitmap);
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
+        }
+    }
+
+    private byte[] bitmapToByteArray(Bitmap bmp){
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        return stream.toByteArray();
+    }
+
+    private void completeBusinessInfoSavingProcess(ParseFile pf){
+        if(pf!= null){
+            business.put("image",pf);
+        }
+        business.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Toast.makeText(getActivity(), R.string.data_saved, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), R.string.data_not_saved, Toast.LENGTH_SHORT).show();
+                    Log.e("ERROR", e.getMessage());
+                }
+            }
+        });
     }
 
 }

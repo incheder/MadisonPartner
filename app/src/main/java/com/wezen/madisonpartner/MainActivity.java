@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,17 +22,19 @@ import com.squareup.picasso.Picasso;
 import com.wezen.madisonpartner.home.DummyFragment;
 import com.wezen.madisonpartner.home.ViewPagerAdapter;
 import com.wezen.madisonpartner.information.InformationFragment;
+import com.wezen.madisonpartner.information.SelectImageDialogFragment;
 import com.wezen.madisonpartner.login.LoginActivity;
 import com.wezen.madisonpartner.request.RequestListFragment;
 import com.wezen.madisonpartner.utils.DialogActivity;
 
-public class MainActivity extends DialogActivity {
+public class MainActivity extends DialogActivity implements SelectImageDialogFragment.OnClickSelectImageDialogListener {
 
     private NavigationView navigationView;
     private String userName;
     private String userEmail;
     private String imageUrl;
     private DrawerLayout drawerLayout;
+    private InformationFragment infoFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +82,8 @@ public class MainActivity extends DialogActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFrag(RequestListFragment.newInstance("",""), getResources().getString(R.string.home_orders));
-        adapter.addFrag(InformationFragment.newInstance("",""), getResources().getString(R.string.home_info));
+        infoFragment = InformationFragment.newInstance("", "");
+        adapter.addFrag(infoFragment, getResources().getString(R.string.home_info));
 
         viewPager.setAdapter(adapter);
     }
@@ -135,5 +139,15 @@ public class MainActivity extends DialogActivity {
     }
 
 
+    @Override
+    public void onCameraClicked() {
+        Log.d("CLICK","CLICK");
+    }
 
+    @Override
+    public void onGalleryClicked() {
+        Log.d("CLICK","CLICK");
+        infoFragment.launchGallery();
+
+    }
 }
