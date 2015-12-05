@@ -23,7 +23,10 @@ import com.wezen.madisonpartner.MainActivity;
 import com.wezen.madisonpartner.R;
 import com.wezen.madisonpartner.request.HomeServiceRequestStatus;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 
@@ -32,6 +35,8 @@ public class SendingNotificationActivity extends AppCompatActivity {
     public  static final String DATE = "date";
     public  static final String HOME_SERVICE_REQUEST_ID = "home_service_request_id";
     public  static final String HOME_SERVICE_NAME = "home_service_name";
+
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE dd 'de' MMM 'del 'yyyy 'a las' hh:mm a", Locale.getDefault());
 
     private ProgressBar progressBar;
     private LinearLayout orderSent;
@@ -115,6 +120,10 @@ public class SendingNotificationActivity extends AppCompatActivity {
                 if (e == null && parseObject != null) {
                     parseObject.put("status", HomeServiceRequestStatus.ASIGNADO.getValue());
                     parseObject.put("attendedBy", ParseUser.getCurrentUser());//TODO if the current user is admin, he can choose an employee to attend the request
+                    Date dateForService = stringToDate(date);
+                    if(dateForService != null){
+                        parseObject.put("dateForService",dateForService);
+                    }
                     parseObject.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
@@ -143,5 +152,17 @@ public class SendingNotificationActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private Date stringToDate(String dateString){
+
+        Date convertedDate = null;
+        try {
+            convertedDate = dateFormat.parse(dateString);
+        } catch (java.text.ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+         return convertedDate;
     }
 }
