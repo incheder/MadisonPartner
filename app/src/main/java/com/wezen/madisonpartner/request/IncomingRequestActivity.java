@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -24,10 +23,9 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.parse.FunctionCallback;
 import com.parse.GetCallback;
-import com.parse.ParseCloud;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.squareup.picasso.Picasso;
@@ -42,9 +40,7 @@ import com.wezen.madisonpartner.utils.Utils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -65,6 +61,8 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     private IncomingRequestDialogFragment dialogRequest;
     private boolean isCancelled = false;
     private ProgressBar progressBar;
+    private String imageUrl;
+    private String problemDesc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,16 +125,23 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                     incomingRequest = new HomeServiceRequest();
                     incomingRequest.setLocation(new LatLng(po.getParseGeoPoint("userLocation").getLatitude(), po.getParseGeoPoint("userLocation").getLongitude()));
                     incomingRequest.setName(po.getParseObject("user").getString("username"));
-                    incomingRequest.setDescription(po.getString("problemDescription"));
+                    problemDesc = po.getString("problemDescription");
+                    incomingRequest.setDescription(problemDesc);
                     int status = po.getInt("status");
                     incomingRequest.setStatus(HomeServiceRequestStatus.valueOf(status));
                     incomingRequest.setHomeServiceID((po.getParseObject("homeService").getObjectId()));
                     incomingRequest.setDate(po.getCreatedAt().toString());
-                    incomingRequest.setUserAvatar(po.getParseObject("user").getParseFile("userImage").getUrl());
+                    incomingRequest.setUserAvatar(po.getParseObject("user").getParseFile("userImage").getUrl());//TODO validar que sea diferente de null
                     incomingRequest.setAddress(po.getString("address"));
                     incomingRequest.setUserID(po.getParseObject("user").getObjectId());
                     incomingRequest.setProviderName(po.getParseObject("homeService").getString("name"));
                     setData(incomingRequest);
+
+                    ParseFile image = po.getParseObject("homeService").getParseFile("image");
+                    imageUrl = null;
+                    if(image!= null){
+                        imageUrl = image.getUrl();
+                    }
 
 
                 } else {
@@ -251,9 +256,11 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         if(date != null){
             Intent intent = new Intent(this, SendingNotificationActivity.class);
             intent.putExtra(SendingNotificationActivity.DATE,date);
-            intent.putExtra(SendingNotificationActivity.ID,incomingRequest.getUserID());
+            intent.putExtra(SendingNotificationActivity.USER_ID,incomingRequest.getUserID());
             intent.putExtra(SendingNotificationActivity.HOME_SERVICE_REQUEST_ID, id);
             intent.putExtra(SendingNotificationActivity.HOME_SERVICE_NAME,incomingRequest.getProviderName());
+            intent.putExtra(SendingNotificationActivity.IMAGE_URL,imageUrl);
+            intent.putExtra(SendingNotificationActivity.PROBLEM_DESCRIPTION,problemDesc);
             startActivity(intent);
 
         }

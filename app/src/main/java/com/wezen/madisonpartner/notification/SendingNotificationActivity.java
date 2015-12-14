@@ -9,12 +9,12 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.parse.FunctionCallback;
 import com.parse.GetCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -28,22 +28,25 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Timer;
 
 public class SendingNotificationActivity extends AppCompatActivity {
-    public  static final String ID = "id";
+    public  static final String USER_ID = "userId";
     public  static final String DATE = "date";
     public  static final String HOME_SERVICE_REQUEST_ID = "home_service_request_id";
     public  static final String HOME_SERVICE_NAME = "home_service_name";
+    public  static final String IMAGE_URL = "image_url";
+    public static final String PROBLEM_DESCRIPTION = "problem_description";
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE dd 'de' MMM 'del 'yyyy 'a las' hh:mm a", Locale.getDefault());
 
     private ProgressBar progressBar;
     private LinearLayout orderSent;
-    private String id;
+    private String userId;
     private String date;
     private String requestId;
     private String name;
+    private String imageUrl;
+    private String problemDesc;
 
 
     @Override
@@ -55,11 +58,12 @@ public class SendingNotificationActivity extends AppCompatActivity {
         Button btnBack = (Button)findViewById(R.id.notificationGoBack);
         btnBack.setOnClickListener(goBackClickListener);
         if(getIntent().getExtras()!= null){
-            id =  getIntent().getStringExtra(ID);
+            userId =  getIntent().getStringExtra(USER_ID);
             date =  getIntent().getStringExtra(DATE);
             requestId = getIntent().getStringExtra(HOME_SERVICE_REQUEST_ID);
             name = getIntent().getStringExtra(HOME_SERVICE_NAME);
             requestId = getIntent().getStringExtra(HOME_SERVICE_REQUEST_ID);
+            problemDesc = getIntent().getStringExtra(PROBLEM_DESCRIPTION);
         }
         updateHomeServiceRequestStatus();
 
@@ -84,11 +88,14 @@ public class SendingNotificationActivity extends AppCompatActivity {
         }
     };
 
-    private void sendPushToClient(String date, String userID,String name){
+    private void sendPushToClient(String date, String userID,String name,String requestId,String imageUrl,String problemDesc){
         Map<String,Object> params = new HashMap<>();
         params.put("client",userID);
         params.put("date",date);
         params.put("homeServiceName",name);
+        //params.put("requestId", requestId);
+        params.put("imageUrl",imageUrl);
+        params.put("problemDescription",problemDesc);
         ParseCloud.callFunctionInBackground("sendPushToClient", params, new FunctionCallback<Object>() {
             @Override
             public void done(Object o, ParseException e) {
@@ -101,8 +108,8 @@ public class SendingNotificationActivity extends AppCompatActivity {
                 } else {
                     //TODO mostrar opcion de reenviar la notificacion y no hacerlo volver al menu principal para comenzar el procedimiento desde cero
                     Log.e("ERROR: ", e.getMessage());
-                    TextView textViewOrderSent = (TextView)orderSent.findViewById(R.id.textview_notification);
-                    if(textViewOrderSent!= null){
+                    TextView textViewOrderSent = (TextView) orderSent.findViewById(R.id.textview_notification);
+                    if (textViewOrderSent != null) {
                         textViewOrderSent.setText(getResources().getString(R.string.order_not_sent));
                     }
                 }
@@ -117,7 +124,7 @@ public class SendingNotificationActivity extends AppCompatActivity {
             public void done(ParseObject parseObject, ParseException e) {
                 progressBar.setVisibility(View.GONE);
                 orderSent.setVisibility(View.VISIBLE);
-                if (e == null && parseObject != null) {
+                if (e == null && parseObject != null) {//TODO get the data of umage url from parseObject
                     parseObject.put("status", HomeServiceRequestStatus.ASIGNADO.getValue());
                     parseObject.put("attendedBy", ParseUser.getCurrentUser());//TODO if the current user is admin, he can choose an employee to attend the request
                     Date dateForService = stringToDate(date);
@@ -129,7 +136,7 @@ public class SendingNotificationActivity extends AppCompatActivity {
                         public void done(ParseException e) {
                             //el status se actulizó mandamos el push al cliente
                             if (e == null) {
-                                sendPushToClient(date, id, name);
+                                sendPushToClient(date, userId, name,requestId,imageUrl,problemDesc);
                             } else {
                                 //no se actualizó
                                 Log.e("ERROR: ", e.getMessage());
