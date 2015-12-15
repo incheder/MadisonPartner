@@ -75,6 +75,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     private String imageUrl;
     private String problemDesc;
     private ParseObject poToUpdate; //in case we reject the request
+    private boolean hasEmployee = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -265,7 +266,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                 showCancel = true;
             }
 
-            dialogRequest = IncomingRequestDialogFragment.newInstance(message,title,showCancel);
+            dialogRequest = IncomingRequestDialogFragment.newInstance(message,title,showCancel,hasEmployee);
             dialogRequest.setCancelable(false);
             dialogRequest.show(getSupportFragmentManager(), "dialogRequest");
 
@@ -315,6 +316,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_CODE && resultCode == RESULT_OK){
+            hasEmployee = true;
             String result = data.getStringExtra(EmployeeListActivity.EMPLOYEE_ID);
             DateDialogFragment dialog = DateDialogFragment.newInstance("", "");
             dialog.setCancelable(false);

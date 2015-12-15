@@ -24,6 +24,7 @@ public class DateDialogFragment extends DialogFragment{
 
     private static final String ARG_HOME_SERVICE_NAME = "home_service_name";
     private static final String ARG_USER_ADDRESS = "user_address";
+
     private DatePickerDialog.OnDateSetListener mListener;
     private DialogInterface.OnClickListener cancelListener;
 
@@ -39,6 +40,7 @@ public class DateDialogFragment extends DialogFragment{
         Bundle args = new Bundle();
         args.putString(ARG_HOME_SERVICE_NAME, name);
         args.putString(ARG_USER_ADDRESS, address);
+
         fragment.setArguments(args);
         return fragment;
     }

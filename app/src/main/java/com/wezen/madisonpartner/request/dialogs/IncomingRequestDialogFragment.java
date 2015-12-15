@@ -9,6 +9,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import com.wezen.madisonpartner.R;
 
@@ -20,11 +22,13 @@ public class IncomingRequestDialogFragment extends DialogFragment {
     private static final String ARG_MESSAGE = "message";
     private static final String ARG_TITLE = "title";
     private static final String ARG_SHOW_CANCEL_BUTTON = "cancel_button";
+    private static final String ARG_EMPLOYEE = "employee";
 
     private OnClickIncomingRequestDialog mListener;
     private String mParamMessage;
     private String mParamTitle;
     private boolean mParamCancelButton;
+    private boolean mParamEmployee;
 
     public interface OnClickIncomingRequestDialog {
         void onPositiveButtonClicked(String date);
@@ -38,12 +42,13 @@ public class IncomingRequestDialogFragment extends DialogFragment {
         }
     }
 
-    public static IncomingRequestDialogFragment newInstance(String message, String title,boolean cancelButton) {
+    public static IncomingRequestDialogFragment newInstance(String message, String title,boolean cancelButton,boolean employee) {
         IncomingRequestDialogFragment fragment = new IncomingRequestDialogFragment();
         Bundle args = new Bundle();
         args.putString(ARG_MESSAGE, message);
         args.putString(ARG_TITLE, title);
         args.putBoolean(ARG_SHOW_CANCEL_BUTTON, cancelButton);
+        args.putBoolean(ARG_EMPLOYEE,employee);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,6 +61,7 @@ public class IncomingRequestDialogFragment extends DialogFragment {
             mParamMessage = getArguments().getString(ARG_MESSAGE);
             mParamTitle = getArguments().getString(ARG_TITLE);
             mParamCancelButton = getArguments().getBoolean(ARG_SHOW_CANCEL_BUTTON);
+            mParamEmployee = getArguments().getBoolean(ARG_EMPLOYEE);
         }
     }
 
@@ -100,6 +106,11 @@ public class IncomingRequestDialogFragment extends DialogFragment {
                         }
                     });
                 }
+        if(mParamEmployee){
+            LayoutInflater layoutInflater = getActivity().getLayoutInflater();
+            View view = layoutInflater.inflate(R.layout.layout,null);
+            builder.setView(view);
+        }
 
         // Create the AlertDialog object and return it
         return builder.create();
