@@ -2,6 +2,7 @@ package com.wezen.madisonpartner.employees;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.wezen.madisonpartner.R;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +39,7 @@ public class EmployeeListActivity extends AppCompatActivity {
         list = new ArrayList<>();
         adapter = new EmployeesAdapter(list,this);
         recyclerViewEmployees.setAdapter(adapter);
-        getEmployees();
+        getEmployees(getIntent().getExtras());
     }
 
     /*@Override
@@ -61,20 +64,31 @@ public class EmployeeListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }*/
 
-    private void getEmployees(){
+    private void getEmployees(Bundle extras){
+        if(extras != null){
+            ArrayList<Parcelable> parcelList = getIntent().getExtras().getParcelableArrayList("employeesList");
+            if(parcelList!= null){
+                for (Parcelable parcelable : parcelList) {
+                    Employee employee = Parcels.unwrap(parcelable);
+                    if(employee!= null){
+                        list.add(employee);
+                    }
+                }
+            }
+        }
 
-        Employee employee =  new Employee();
+        /*Employee employee =  new Employee();
         employee.setName("Tú");
-        employee.setAvatar("http://files.parsetfss.com/fa3a72ef-1f46-4743-8933-ab4f6c8ff56a/tfss-10e62ad0-18d8-4b9c-891e-a60e06600dfd-mcfly.jpg");
+        employee.setAvatarUrl("http://files.parsetfss.com/fa3a72ef-1f46-4743-8933-ab4f6c8ff56a/tfss-10e62ad0-18d8-4b9c-891e-a60e06600dfd-mcfly.jpg");
         employee.setId("100");
 
         for (int i = 0; i < 5; i++) {
             employee = new Employee();
             employee.setName("Empleado " + i);
-            employee.setAvatar("http://files.parsetfss.com/fa3a72ef-1f46-4743-8933-ab4f6c8ff56a/tfss-10e62ad0-18d8-4b9c-891e-a60e06600dfd-mcfly.jpg");
+            employee.setAvatarUrl("http://files.parsetfss.com/fa3a72ef-1f46-4743-8933-ab4f6c8ff56a/tfss-10e62ad0-18d8-4b9c-891e-a60e06600dfd-mcfly.jpg");
             employee.setId("" + i);
             list.add(employee);
-        }
+        }*/
         adapter.notifyDataSetChanged();
     }
 

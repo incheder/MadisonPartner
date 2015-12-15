@@ -1,13 +1,18 @@
 package com.wezen.madisonpartner.employees;
 
+import org.parceler.Parcel;
+
 /**
  * Created by eder on 10/11/2015.
  */
+@Parcel(Parcel.Serialization.BEAN)
 public class Employee {
 
     private String name;
     private String id;
-    private String avatar;
+    private String avatarUrl;
+
+    public  Employee(){}
 
     public String getName() {
         return name;
@@ -25,11 +30,11 @@ public class Employee {
         this.id = id;
     }
 
-    public String getAvatar() {
-        return avatar;
+    public String getAvatarUrl() {
+        return avatarUrl;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 }

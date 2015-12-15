@@ -4,10 +4,12 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -28,8 +30,12 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.squareup.picasso.Picasso;
 import com.wezen.madisonpartner.R;
+import com.wezen.madisonpartner.employees.Employee;
+import com.wezen.madisonpartner.employees.Employee$$Parcelable;
 import com.wezen.madisonpartner.employees.EmployeeListActivity;
 import com.wezen.madisonpartner.notification.SendingNotificationActivity;
 import com.wezen.madisonpartner.request.dialogs.DateDialogFragment;
@@ -37,9 +43,14 @@ import com.wezen.madisonpartner.request.dialogs.IncomingRequestDialogFragment;
 import com.wezen.madisonpartner.request.dialogs.TimeDialogFragment;
 import com.wezen.madisonpartner.utils.Utils;
 
+import org.parceler.Parcel;
+import org.parceler.Parcels;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -63,6 +74,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     private ProgressBar progressBar;
     private String imageUrl;
     private String problemDesc;
+    private ParseObject poToUpdate; //in case we reject the request
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,12 +128,13 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     private void getRequest(String id){
         ParseQuery<ParseObject> query = ParseQuery.getQuery("HomeServiceRequest");
         query.include("user");
-        query.include("homeService");
+        query.include("homeService.employees");
         query.getInBackground(id, new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject po, ParseException e) {
                 progressBar.setVisibility(View.GONE);
                 if (e == null) {
+                    poToUpdate = po;
                     incomingRequest = new HomeServiceRequest();
                     incomingRequest.setLocation(new LatLng(po.getParseGeoPoint("userLocation").getLatitude(), po.getParseGeoPoint("userLocation").getLongitude()));
                     incomingRequest.setName(po.getParseObject("user").getString("username"));
@@ -131,7 +144,9 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                     incomingRequest.setStatus(HomeServiceRequestStatus.valueOf(status));
                     incomingRequest.setHomeServiceID((po.getParseObject("homeService").getObjectId()));
                     incomingRequest.setDate(po.getCreatedAt().toString());
-                    incomingRequest.setUserAvatar(po.getParseObject("user").getParseFile("userImage").getUrl());//TODO validar que sea diferente de null
+                    if(po.getParseObject("user").getParseFile("userImage")!= null){
+                        incomingRequest.setUserAvatar(po.getParseObject("user").getParseFile("userImage").getUrl());
+                }
                     incomingRequest.setAddress(po.getString("address"));
                     incomingRequest.setUserID(po.getParseObject("user").getObjectId());
                     incomingRequest.setProviderName(po.getParseObject("homeService").getString("name"));
@@ -139,7 +154,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
 
                     ParseFile image = po.getParseObject("homeService").getParseFile("image");
                     imageUrl = null;
-                    if(image!= null){
+                    if (image != null) {
                         imageUrl = image.getUrl();
                     }
 
@@ -170,21 +185,36 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(IncomingRequestActivity.this,EmployeeListActivity.class);
-                //startActivityForResult(intent, REQUEST_CODE);
-                accept.setEnabled(false);
-                decline.setEnabled(false);
-                dialogDate = DateDialogFragment.newInstance("", "");
-                dialogDate.setCancelable(false);
-                dialogDate.show(getSupportFragmentManager(), "dialogDate");
+                if (poToUpdate.getParseObject("homeService").getList("employees") != null) {
+                    List<ParseUser> list = poToUpdate.getParseObject("homeService").getList("employees");
+                    ArrayList<Parcelable> employeesList = new ArrayList<>();
+                    for (ParseUser user : list) {
+                        Employee employee = new Employee();
+                        employee.setId(user.getObjectId());
+                        employee.setName(user.getUsername());
+                        if (user.getParseFile("userImage") != null) {
+                            employee.setAvatarUrl(user.getParseFile("image").getUrl());
+                        }
+                        employeesList.add(Parcels.wrap(employee));
+                    }
+                    Intent intent = new Intent(IncomingRequestActivity.this, EmployeeListActivity.class);
+                    intent.putParcelableArrayListExtra("employeesList", employeesList);
+                    startActivityForResult(intent, REQUEST_CODE);
+                } else {
+                    accept.setEnabled(false);
+                    decline.setEnabled(false);
+                    dialogDate = DateDialogFragment.newInstance("", "");
+                    dialogDate.setCancelable(false);
+                    dialogDate.show(getSupportFragmentManager(), "dialogDate");
+                }
 
             }
         });
         decline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(IncomingRequestActivity.this, "decline", Toast.LENGTH_SHORT).show();
-                //sendPushToClient();
+                Toast.makeText(IncomingRequestActivity.this, R.string.maybe_the_next_time, Toast.LENGTH_SHORT).show();
+                updateHomeServiceRequestStatus(HomeServiceRequestStatus.RECHAZADO);
             }
         });
 
@@ -293,6 +323,21 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             ft.commitAllowingStateLoss();
 
         }
+    }
+
+    private void updateHomeServiceRequestStatus(HomeServiceRequestStatus status){
+        poToUpdate.put("status",status.getValue());
+        poToUpdate.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(e==null){
+                    finish();
+                } else {
+                    //ups
+                    Log.e("ERROR","Home service request not updated: " + e.getMessage());
+                }
+            }
+        });
     }
 
 

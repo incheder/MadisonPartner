@@ -52,7 +52,7 @@ public class EmployeesAdapter extends RecyclerView.Adapter<EmployeesAdapter.Requ
     public void onBindViewHolder(RequestHolder holder, final int position) {
         final Employee item = list.get(position);
         holder.name.setText(item.getName());
-        Picasso.with(context).load(item.getAvatar()).into(holder.userAvatar);
+        Picasso.with(context).load(item.getAvatarUrl()).into(holder.userAvatar);
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

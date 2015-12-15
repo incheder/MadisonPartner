@@ -143,7 +143,6 @@ public class InformationFragment extends Fragment {
         buttonSaveImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //updateBusinessImage();
                 /*SelectImageDialogFragment dialogRequest = SelectImageDialogFragment.newInstance(getActivity().getResources().getString(R.string.select_image_title));
                 dialogRequest.setCancelable(true);
                 dialogRequest.show(getActivity().getSupportFragmentManager(), "dialogSelectImage");*/
@@ -156,25 +155,6 @@ public class InformationFragment extends Fragment {
         getBusinessInformation();
 
         return view;
-    }
-
-    private void updateBusinessImage() {
-        ParseQuery<ParseObject> queryServices = ParseQuery.getQuery("HomeServices");
-        queryServices.whereEqualTo("serviceProvider", ParseUser.getCurrentUser());
-        queryServices.getFirstInBackground(new GetCallback<ParseObject>() {
-            @Override
-            public void done(ParseObject parseObject, ParseException e) {
-                if (e == null) {
-                    if (parseObject != null) {
-                        //TODO save new image
-                    } else {
-                        //TODO handle error
-                    }
-                } else {
-                    //TODO handle error
-                }
-            }
-        });
     }
 
     private void getBusinessInformation() {

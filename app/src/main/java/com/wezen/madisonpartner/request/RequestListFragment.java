@@ -95,10 +95,10 @@ public class RequestListFragment extends Fragment {
         ParseQuery<ParseObject> queryServices = ParseQuery.getQuery("HomeServices");
         queryServices.whereEqualTo("serviceProvider", ParseUser.getCurrentUser());
         ParseQuery<ParseObject> queryRequest = ParseQuery.getQuery("HomeServiceRequest");
+        queryRequest.whereNotEqualTo("status", HomeServiceRequestStatus.RECHAZADO.getValue());
         if(status != null){
             queryRequest.whereEqualTo("status", status.getValue());
         }
-        queryRequest.whereNotEqualTo("status", HomeServiceRequestStatus.RECHAZADO.getValue());
        // queryRequest.whereNotEqualTo("status", HomeServiceRequestStatus.ENVIADO.getValue());
         queryRequest.whereMatchesQuery("homeService",queryServices);
         queryRequest.include("homeService");
