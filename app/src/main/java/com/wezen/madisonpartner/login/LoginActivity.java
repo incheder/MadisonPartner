@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.parse.LogInCallback;
 import com.parse.ParseException;
+import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 import com.wezen.madisonpartner.MainActivity;
@@ -258,7 +259,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             public void done(ParseUser parseUser, ParseException e) {
                 // mProgressView.setVisibility(View.GONE);
                 showProgress(false);
-                if(parseUser != null && parseUser.getInt("userType") == 2){//no problemo
+                if(parseUser != null && (parseUser.getInt("userType") == 2 || parseUser.getInt("userType") == 3 )){//no problemo
+                    if(parseUser.getInt("userType") == 2){
+                        ParsePush.subscribeInBackground("Partner");
+                    } else {
+                        ParsePush.subscribeInBackground("Employee");
+                    }
                     goToCategories();
                     finish();
                 } else if(parseUser != null){//ups!

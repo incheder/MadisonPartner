@@ -152,6 +152,7 @@ public class InformationFragment extends Fragment {
             }
         });
 
+        saveInstallationData();
         getBusinessInformation();
 
         return view;
@@ -159,7 +160,11 @@ public class InformationFragment extends Fragment {
 
     private void getBusinessInformation() {
         ParseQuery<ParseObject> queryServices = ParseQuery.getQuery("HomeServices");
-        queryServices.whereEqualTo("serviceProvider", ParseUser.getCurrentUser());
+        if(ParseUser.getCurrentUser().getInt("userType") == 2){
+            queryServices.whereEqualTo("serviceProvider", ParseUser.getCurrentUser());
+        } else {
+            queryServices.whereEqualTo("employees", ParseUser.getCurrentUser());
+        }
         queryServices.include("Category");
         queryServices.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
@@ -167,7 +172,7 @@ public class InformationFragment extends Fragment {
                 progressBar.setVisibility(View.GONE);
                 if (e == null) {
                     business = parseObject;
-                    saveInstallationData(parseObject);
+
                     editTextName.setText(parseObject.getString("name"));
                     editTextDescription.setText(parseObject.getString("description"));
                     if (parseObject.getParseFile("image") != null) {
@@ -280,13 +285,14 @@ public class InformationFragment extends Fragment {
 
     }
 
-    private void saveInstallationData(ParseObject homeService){
+    private void saveInstallationData(){
         final SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        int highScore = sharedPref.getInt(getString(R.string.installation_already_saved), 0);
-        if(highScore == 0){
+        int isSaved = sharedPref.getInt(getString(R.string.installation_already_saved), 0);
+        if(isSaved == 0){
             ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-            ParseObject hs = ParseObject.createWithoutData("HomeServices",homeService.getObjectId());
-            installation.put("homeService", homeService);
+
+            //ParseObject hs = ParseObject.createWithoutData("HomeServices",homeService.getObjectId());
+            installation.put("user", ParseUser.getCurrentUser());
             installation.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
