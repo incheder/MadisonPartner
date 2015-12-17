@@ -21,6 +21,8 @@ import java.util.List;
 public class EmployeeListActivity extends AppCompatActivity {
 
     public static final String EMPLOYEE_ID = "employee_id";
+    public static final String EMPLOYEE_NAME = "employee_name";
+    public static final String EMPLOYEE_AVATAR_URL = "employee_avatar_url";
     private List<Employee> list;
     private EmployeesAdapter adapter;
 
@@ -92,9 +94,11 @@ public class EmployeeListActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-    public void sendData(String id){
+    public void sendData(String id, String name, String avatarUrl){
         Intent returnIntent = new Intent();
         returnIntent.putExtra(EMPLOYEE_ID,id);
+        returnIntent.putExtra(EMPLOYEE_NAME,name);
+        returnIntent.putExtra(EMPLOYEE_AVATAR_URL,avatarUrl);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }

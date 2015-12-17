@@ -11,7 +11,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.wezen.madisonpartner.R;
 
 /**
@@ -22,13 +25,17 @@ public class IncomingRequestDialogFragment extends DialogFragment {
     private static final String ARG_MESSAGE = "message";
     private static final String ARG_TITLE = "title";
     private static final String ARG_SHOW_CANCEL_BUTTON = "cancel_button";
-    private static final String ARG_EMPLOYEE = "employee";
+    private static final String ARG_HAS_EMPLOYEE = "hasEmployee";
+    private static final String ARG_EMPLOYEE_NAME = "employeeName";
+    private static final String ARG_EMPLOYEE_AVATAR = "employeeAvatar";
 
     private OnClickIncomingRequestDialog mListener;
     private String mParamMessage;
     private String mParamTitle;
     private boolean mParamCancelButton;
-    private boolean mParamEmployee;
+    private boolean mParamHasEmployee;
+    private String mParamEmployeeName;
+    private String mParamEmployeeAvatar;
 
     public interface OnClickIncomingRequestDialog {
         void onPositiveButtonClicked(String date);
@@ -42,13 +49,20 @@ public class IncomingRequestDialogFragment extends DialogFragment {
         }
     }
 
-    public static IncomingRequestDialogFragment newInstance(String message, String title,boolean cancelButton,boolean employee) {
+    public static IncomingRequestDialogFragment newInstance(String message,
+                                                            String title,
+                                                            boolean cancelButton,
+                                                            boolean hasEmployee,
+                                                            String employeeName,
+                                                            String employeeAvatar) {
         IncomingRequestDialogFragment fragment = new IncomingRequestDialogFragment();
         Bundle args = new Bundle();
         args.putString(ARG_MESSAGE, message);
         args.putString(ARG_TITLE, title);
         args.putBoolean(ARG_SHOW_CANCEL_BUTTON, cancelButton);
-        args.putBoolean(ARG_EMPLOYEE,employee);
+        args.putBoolean(ARG_HAS_EMPLOYEE, hasEmployee);
+        args.putString(ARG_EMPLOYEE_NAME, employeeName);
+        args.putString(ARG_EMPLOYEE_AVATAR, employeeAvatar);
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,7 +75,9 @@ public class IncomingRequestDialogFragment extends DialogFragment {
             mParamMessage = getArguments().getString(ARG_MESSAGE);
             mParamTitle = getArguments().getString(ARG_TITLE);
             mParamCancelButton = getArguments().getBoolean(ARG_SHOW_CANCEL_BUTTON);
-            mParamEmployee = getArguments().getBoolean(ARG_EMPLOYEE);
+            mParamHasEmployee = getArguments().getBoolean(ARG_HAS_EMPLOYEE);
+            mParamEmployeeName = getArguments().getString(ARG_EMPLOYEE_NAME);
+            mParamEmployeeAvatar = getArguments().getString(ARG_EMPLOYEE_AVATAR);
         }
     }
 
@@ -106,9 +122,19 @@ public class IncomingRequestDialogFragment extends DialogFragment {
                         }
                     });
                 }
-        if(mParamEmployee){
+        if(mParamHasEmployee){
             LayoutInflater layoutInflater = getActivity().getLayoutInflater();
-            View view = layoutInflater.inflate(R.layout.layout,null);
+            View view = layoutInflater.inflate(R.layout.employee_info_in_dialog, null);
+            TextView employeeName = (TextView)view.findViewById(R.id.employee_info_name);
+            ImageView employeeAvatar = (ImageView)view.findViewById(R.id.employee_info_avatar);
+            if(mParamEmployeeAvatar != null && mParamEmployeeName != null){
+                employeeName.setText(mParamEmployeeName);
+                Picasso.with(getActivity()).load(mParamEmployeeAvatar).into(employeeAvatar);
+            } else{
+                employeeName.setVisibility(View.GONE);
+                employeeAvatar.setVisibility(View.GONE);
+            }
+
             builder.setView(view);
         }
 

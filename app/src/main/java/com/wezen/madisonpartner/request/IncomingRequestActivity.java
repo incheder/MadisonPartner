@@ -76,6 +76,8 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     private String problemDesc;
     private ParseObject poToUpdate; //in case we reject the request
     private boolean hasEmployee = false;
+    private String employeeName;
+    private String employeeAvatarUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,15 +188,16 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (poToUpdate.getParseObject("homeService").getList("employees") != null) {
-                    List<ParseUser> list = poToUpdate.getParseObject("homeService").getList("employees");
+
+                List<ParseUser> list = poToUpdate.getParseObject("homeService").getList("employees");
+                if (list != null && list.size() > 0) {
                     ArrayList<Parcelable> employeesList = new ArrayList<>();
                     for (ParseUser user : list) {
                         Employee employee = new Employee();
                         employee.setId(user.getObjectId());
                         employee.setName(user.getUsername());
                         if (user.getParseFile("userImage") != null) {
-                            employee.setAvatarUrl(user.getParseFile("image").getUrl());
+                            employee.setAvatarUrl(user.getParseFile("userImage").getUrl());
                         }
                         employeesList.add(Parcels.wrap(employee));
                     }
@@ -266,7 +269,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                 showCancel = true;
             }
 
-            dialogRequest = IncomingRequestDialogFragment.newInstance(message,title,showCancel,hasEmployee);
+            dialogRequest = IncomingRequestDialogFragment.newInstance(message,title,showCancel,hasEmployee,employeeName,employeeAvatarUrl);
             dialogRequest.setCancelable(false);
             dialogRequest.show(getSupportFragmentManager(), "dialogRequest");
 
@@ -318,6 +321,9 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         if(requestCode == REQUEST_CODE && resultCode == RESULT_OK){
             hasEmployee = true;
             String result = data.getStringExtra(EmployeeListActivity.EMPLOYEE_ID);
+            employeeName = data.getStringExtra(EmployeeListActivity.EMPLOYEE_NAME);
+            employeeAvatarUrl = data.getStringExtra(EmployeeListActivity.EMPLOYEE_AVATAR_URL);
+
             DateDialogFragment dialog = DateDialogFragment.newInstance("", "");
             dialog.setCancelable(false);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -336,6 +342,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                     finish();
                 } else {
                     //ups
+                    Toast.makeText(IncomingRequestActivity.this, R.string.we_could_not_comunicate_with_our_mothership, Toast.LENGTH_SHORT).show();
                     Log.e("ERROR","Home service request not updated: " + e.getMessage());
                 }
             }

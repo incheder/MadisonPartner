@@ -56,7 +56,7 @@ public class EmployeesAdapter extends RecyclerView.Adapter<EmployeesAdapter.Requ
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((EmployeeListActivity)context).sendData(item.getId());
+                ((EmployeeListActivity)context).sendData(item.getId(),item.getName(),item.getAvatarUrl());
             }
         });
     }

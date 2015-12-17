@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/elements_margin"
+    android:paddingLeft="@dimen/elements_margin"
+    android:paddingRight="@dimen/elements_margin"
+    >
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/employee_info_avatar"
+        android:src="@drawable/mcfly"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/employee_info_name"
+        android:layout_marginLeft="@dimen/elements_margin"
+        android:layout_marginStart="@dimen/elements_margin"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        />
+
+</LinearLayout>

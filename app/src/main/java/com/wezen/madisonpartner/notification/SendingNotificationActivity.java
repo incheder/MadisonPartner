@@ -128,15 +128,14 @@ public class SendingNotificationActivity extends AppCompatActivity {
                     parseObject.put("status", HomeServiceRequestStatus.ASIGNADO.getValue());
                     parseObject.put("attendedBy", ParseUser.getCurrentUser());//TODO if the current user is admin, he can choose an employee to attend the request
                     Date dateForService = stringToDate(date);
-                    if(dateForService != null){
-                        parseObject.put("dateForService",dateForService);
+                    if (dateForService != null) {
+                        parseObject.put("dateForService", dateForService);
                     }
                     parseObject.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
-                            //el status se actulizó mandamos el push al cliente
-                            if (e == null) {
-                                sendPushToClient(date, userId, name,requestId,imageUrl,problemDesc);
+                            if (e == null) { //el status se actulizó, mandamos el push al cliente
+                                sendPushToClient(date, userId, name, requestId, imageUrl, problemDesc);
                             } else {
                                 //no se actualizó
                                 Log.e("ERROR: ", e.getMessage());
@@ -171,5 +170,34 @@ public class SendingNotificationActivity extends AppCompatActivity {
             e.printStackTrace();
         }
          return convertedDate;
+    }
+
+    private void sendPushToEmployee(String date, String userID,String name,String requestId,String imageUrl,String problemDesc){
+        Map<String,Object> params = new HashMap<>();
+        params.put("client",userID);
+        params.put("date",date);
+        params.put("homeServiceName",name);
+        //params.put("requestId", requestId);
+        params.put("imageUrl",imageUrl);
+        params.put("problemDescription",problemDesc);
+        ParseCloud.callFunctionInBackground("sendPushToClient", params, new FunctionCallback<Object>() {
+            @Override
+            public void done(Object o, ParseException e) {
+                progressBar.setVisibility(View.GONE);
+                orderSent.setVisibility(View.VISIBLE);
+                if (e == null) {
+                    Log.d("SUCCESS: ", o.toString());
+                    //finish();
+
+                } else {
+                    //TODO mostrar opcion de reenviar la notificacion y no hacerlo volver al menu principal para comenzar el procedimiento desde cero
+                    Log.e("ERROR: ", e.getMessage());
+                    TextView textViewOrderSent = (TextView) orderSent.findViewById(R.id.textview_notification);
+                    if (textViewOrderSent != null) {
+                        textViewOrderSent.setText(getResources().getString(R.string.order_not_sent));
+                    }
+                }
+            }
+        });
     }
 }
