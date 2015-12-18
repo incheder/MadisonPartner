@@ -78,6 +78,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     private boolean hasEmployee = false;
     private String employeeName;
     private String employeeAvatarUrl;
+    private String employeeId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,9 +148,9 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                     incomingRequest.setStatus(HomeServiceRequestStatus.valueOf(status));
                     incomingRequest.setHomeServiceID((po.getParseObject("homeService").getObjectId()));
                     incomingRequest.setDate(po.getCreatedAt().toString());
-                    if(po.getParseObject("user").getParseFile("userImage")!= null){
+                    if (po.getParseObject("user").getParseFile("userImage") != null) {
                         incomingRequest.setUserAvatar(po.getParseObject("user").getParseFile("userImage").getUrl());
-                }
+                    }
                     incomingRequest.setAddress(po.getString("address"));
                     incomingRequest.setUserID(po.getParseObject("user").getObjectId());
                     incomingRequest.setProviderName(po.getParseObject("homeService").getString("name"));
@@ -292,7 +293,13 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             intent.putExtra(SendingNotificationActivity.DATE,date);
             intent.putExtra(SendingNotificationActivity.USER_ID,incomingRequest.getUserID());
             intent.putExtra(SendingNotificationActivity.HOME_SERVICE_REQUEST_ID, id);
-            intent.putExtra(SendingNotificationActivity.HOME_SERVICE_NAME,incomingRequest.getProviderName());
+            intent.putExtra(SendingNotificationActivity.HAS_EMPLOYEE,hasEmployee);
+            if(hasEmployee){
+                intent.putExtra(SendingNotificationActivity.HOME_SERVICE_NAME,employeeName);
+                intent.putExtra(SendingNotificationActivity.EMPLOYEE_ID,employeeId);
+            } else {
+                intent.putExtra(SendingNotificationActivity.HOME_SERVICE_NAME,incomingRequest.getProviderName());
+            }
             intent.putExtra(SendingNotificationActivity.IMAGE_URL,imageUrl);
             intent.putExtra(SendingNotificationActivity.PROBLEM_DESCRIPTION,problemDesc);
             startActivity(intent);
@@ -320,7 +327,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_CODE && resultCode == RESULT_OK){
             hasEmployee = true;
-            String result = data.getStringExtra(EmployeeListActivity.EMPLOYEE_ID);
+            employeeId = data.getStringExtra(EmployeeListActivity.EMPLOYEE_ID);
             employeeName = data.getStringExtra(EmployeeListActivity.EMPLOYEE_NAME);
             employeeAvatarUrl = data.getStringExtra(EmployeeListActivity.EMPLOYEE_AVATAR_URL);
 

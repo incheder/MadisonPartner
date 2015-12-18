@@ -36,6 +36,9 @@ public class SendingNotificationActivity extends AppCompatActivity {
     public  static final String HOME_SERVICE_NAME = "home_service_name";
     public  static final String IMAGE_URL = "image_url";
     public static final String PROBLEM_DESCRIPTION = "problem_description";
+    public static final String HAS_EMPLOYEE = "hasEmployee";
+    public static final String EMPLOYEE_ID = "employee_id";
+
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE dd 'de' MMM 'del 'yyyy 'a las' hh:mm a", Locale.getDefault());
 
@@ -47,6 +50,8 @@ public class SendingNotificationActivity extends AppCompatActivity {
     private String name;
     private String imageUrl;
     private String problemDesc;
+    private boolean hasEmployee;
+    private String employeeId;
 
 
     @Override
@@ -62,10 +67,13 @@ public class SendingNotificationActivity extends AppCompatActivity {
             date =  getIntent().getStringExtra(DATE);
             requestId = getIntent().getStringExtra(HOME_SERVICE_REQUEST_ID);
             name = getIntent().getStringExtra(HOME_SERVICE_NAME);
-            requestId = getIntent().getStringExtra(HOME_SERVICE_REQUEST_ID);
             problemDesc = getIntent().getStringExtra(PROBLEM_DESCRIPTION);
+            hasEmployee = getIntent().getBooleanExtra(HAS_EMPLOYEE, false);
+            employeeId = getIntent().getStringExtra(EMPLOYEE_ID);
+
         }
-        updateHomeServiceRequestStatus();
+
+       getAttendedBy();
 
     }
 
@@ -88,19 +96,16 @@ public class SendingNotificationActivity extends AppCompatActivity {
         }
     };
 
-    private void sendPushToClient(String date, String userID,String name,String requestId,String imageUrl,String problemDesc){
+    private void sendPushToClient(String date, String userID,String name,String imageUrl,String problemDesc){
         Map<String,Object> params = new HashMap<>();
         params.put("client",userID);
         params.put("date",date);
         params.put("homeServiceName",name);
-        //params.put("requestId", requestId);
         params.put("imageUrl",imageUrl);
         params.put("problemDescription",problemDesc);
         ParseCloud.callFunctionInBackground("sendPushToClient", params, new FunctionCallback<Object>() {
             @Override
             public void done(Object o, ParseException e) {
-                progressBar.setVisibility(View.GONE);
-                orderSent.setVisibility(View.VISIBLE);
                 if (e == null) {
                     Log.d("SUCCESS: ", o.toString());
                     //finish();
@@ -117,16 +122,16 @@ public class SendingNotificationActivity extends AppCompatActivity {
         });
     }
 
-    private void updateHomeServiceRequestStatus(){
+    private void updateHomeServiceRequestStatus(final ParseUser attendedBy){
         ParseQuery<ParseObject> query = ParseQuery.getQuery("HomeServiceRequest");
         query.getInBackground(requestId, new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
                 progressBar.setVisibility(View.GONE);
                 orderSent.setVisibility(View.VISIBLE);
-                if (e == null && parseObject != null) {//TODO get the data of umage url from parseObject
+                if (e == null && parseObject != null) {
                     parseObject.put("status", HomeServiceRequestStatus.ASIGNADO.getValue());
-                    parseObject.put("attendedBy", ParseUser.getCurrentUser());//TODO if the current user is admin, he can choose an employee to attend the request
+                    parseObject.put("attendedBy",attendedBy);//TODO if the current user is admin, he can choose an employee to attend the request
                     Date dateForService = stringToDate(date);
                     if (dateForService != null) {
                         parseObject.put("dateForService", dateForService);
@@ -135,7 +140,10 @@ public class SendingNotificationActivity extends AppCompatActivity {
                         @Override
                         public void done(ParseException e) {
                             if (e == null) { //el status se actulizó, mandamos el push al cliente
-                                sendPushToClient(date, userId, name, requestId, imageUrl, problemDesc);
+                                sendPushToClient(date, userId, name, imageUrl, problemDesc);
+                                if(hasEmployee){//y al empleado
+                                   // sendPushToEmployee(requestId);
+                                }
                             } else {
                                 //no se actualizó
                                 Log.e("ERROR: ", e.getMessage());
@@ -172,32 +180,39 @@ public class SendingNotificationActivity extends AppCompatActivity {
          return convertedDate;
     }
 
-    private void sendPushToEmployee(String date, String userID,String name,String requestId,String imageUrl,String problemDesc){
+    private void sendPushToEmployee(String requestId){
         Map<String,Object> params = new HashMap<>();
-        params.put("client",userID);
-        params.put("date",date);
-        params.put("homeServiceName",name);
-        //params.put("requestId", requestId);
-        params.put("imageUrl",imageUrl);
-        params.put("problemDescription",problemDesc);
-        ParseCloud.callFunctionInBackground("sendPushToClient", params, new FunctionCallback<Object>() {
+        params.put("requestId", requestId);
+        ParseCloud.callFunctionInBackground("sendPushToEmployee", params, new FunctionCallback<Object>() {
             @Override
             public void done(Object o, ParseException e) {
-                progressBar.setVisibility(View.GONE);
-                orderSent.setVisibility(View.VISIBLE);
                 if (e == null) {
                     Log.d("SUCCESS: ", o.toString());
                     //finish();
-
                 } else {
-                    //TODO mostrar opcion de reenviar la notificacion y no hacerlo volver al menu principal para comenzar el procedimiento desde cero
                     Log.e("ERROR: ", e.getMessage());
-                    TextView textViewOrderSent = (TextView) orderSent.findViewById(R.id.textview_notification);
-                    if (textViewOrderSent != null) {
-                        textViewOrderSent.setText(getResources().getString(R.string.order_not_sent));
-                    }
+
                 }
             }
         });
+    }
+
+    private void getAttendedBy(){
+        if(hasEmployee && employeeId != null){
+            ParseQuery<ParseUser> query = ParseUser.getQuery();
+            query.whereEqualTo("objectId",employeeId);
+            query.getFirstInBackground(new GetCallback<ParseUser>() {
+                @Override
+                public void done(ParseUser parseUser, ParseException e) {
+                    if(e== null){
+                        updateHomeServiceRequestStatus(parseUser);
+                    } else {
+                        Log.e("ERROR","empleado no encontrado: " + e.getMessage());
+                    }
+                }
+            });
+        } else {
+            updateHomeServiceRequestStatus(ParseUser.getCurrentUser());
+        }
     }
 }

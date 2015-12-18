@@ -82,9 +82,10 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFrag(RequestListFragment.newInstance("",""), getResources().getString(R.string.home_orders));
-        infoFragment = InformationFragment.newInstance("", "");
-        adapter.addFrag(infoFragment, getResources().getString(R.string.home_info));
-
+        if(ParseUser.getCurrentUser().getInt("userType") == 2){
+            infoFragment = InformationFragment.newInstance("", "");
+            adapter.addFrag(infoFragment, getResources().getString(R.string.home_info));
+        }
         viewPager.setAdapter(adapter);
     }
 

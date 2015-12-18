@@ -91,16 +91,21 @@ public class RequestListFragment extends Fragment {
     }
 
     private void getList(HomeServiceRequestStatus status) {
-
-        ParseQuery<ParseObject> queryServices = ParseQuery.getQuery("HomeServices");
-        queryServices.whereEqualTo("serviceProvider", ParseUser.getCurrentUser());
         ParseQuery<ParseObject> queryRequest = ParseQuery.getQuery("HomeServiceRequest");
-        queryRequest.whereNotEqualTo("status", HomeServiceRequestStatus.RECHAZADO.getValue());
-        if(status != null){
-            queryRequest.whereEqualTo("status", status.getValue());
+        if(ParseUser.getCurrentUser().getInt("userType") == 2){
+            ParseQuery<ParseObject> queryServices = ParseQuery.getQuery("HomeServices");
+            queryServices.whereEqualTo("serviceProvider", ParseUser.getCurrentUser());
+            queryRequest.whereNotEqualTo("status", HomeServiceRequestStatus.RECHAZADO.getValue());
+            if(status != null){
+                queryRequest.whereEqualTo("status", status.getValue());
+            }
+            queryRequest.whereMatchesQuery("homeService",queryServices);
+
+        } else {
+            queryRequest.whereEqualTo("attendedBy", ParseUser.getCurrentUser());
         }
-       // queryRequest.whereNotEqualTo("status", HomeServiceRequestStatus.ENVIADO.getValue());
-        queryRequest.whereMatchesQuery("homeService",queryServices);
+        //TODO if userType 3 query for attendedBy
+        // queryRequest.whereNotEqualTo("status", HomeServiceRequestStatus.ENVIADO.getValue());
         queryRequest.include("homeService");
         queryRequest.include("user");
         queryRequest.orderByDescending("createdAt");

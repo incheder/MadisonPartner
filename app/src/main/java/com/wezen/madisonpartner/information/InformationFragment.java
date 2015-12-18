@@ -153,18 +153,20 @@ public class InformationFragment extends Fragment {
         });
 
         saveInstallationData();
-        getBusinessInformation();
+       // if(ParseUser.getCurrentUser().getInt("userType") == 2){
+            getBusinessInformation();
+        //}
 
         return view;
     }
 
     private void getBusinessInformation() {
         ParseQuery<ParseObject> queryServices = ParseQuery.getQuery("HomeServices");
-        if(ParseUser.getCurrentUser().getInt("userType") == 2){
+        //if(ParseUser.getCurrentUser().getInt("userType") == 2){
             queryServices.whereEqualTo("serviceProvider", ParseUser.getCurrentUser());
-        } else {
-            queryServices.whereEqualTo("employees", ParseUser.getCurrentUser());
-        }
+       // } else {
+         //   queryServices.whereEqualTo("employees", ParseUser.getCurrentUser());
+        //}
         queryServices.include("Category");
         queryServices.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
