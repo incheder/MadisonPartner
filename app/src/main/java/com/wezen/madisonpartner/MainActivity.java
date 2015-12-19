@@ -1,6 +1,8 @@
 package com.wezen.madisonpartner;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.Image;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -17,7 +19,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.squareup.picasso.Picasso;
 import com.wezen.madisonpartner.home.DummyFragment;
 import com.wezen.madisonpartner.home.ViewPagerAdapter;
@@ -35,6 +40,7 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
     private String imageUrl;
     private DrawerLayout drawerLayout;
     private InformationFragment infoFragment;
+    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +50,7 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
         setSupportActionBar(toolbar);
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        //navigationView.setNavigationItemSelectedListener( navigationItemSelectedListener );
+        navigationView.setNavigationItemSelectedListener( navigationItemSelectedListener );
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.main_viewpager);
         setupViewPager(viewPager);
@@ -75,6 +81,7 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
         //calling sync state is necessay or else your hamburger icon wont show up
         actionBarDrawerToggle.syncState();
         fillNavigationViewHeader();
+        saveInstallationData();
 
     }
 
@@ -122,6 +129,7 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
 
             } else if (id == R.id.menu_logout){
                 ParseUser.logOut();
+                updateSharedPref(R.string.installation_already_saved,0);
                 goToLogin();
             }
             if(toLaunch != null){
@@ -142,7 +150,7 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
 
     @Override
     public void onCameraClicked() {
-        Log.d("CLICK","CLICK");
+        Log.d("CLICK", "CLICK");
     }
 
     @Override
@@ -150,5 +158,37 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
         Log.d("CLICK","CLICK");
         infoFragment.launchGallery();
 
+    }
+
+    private void saveInstallationData(){
+        sharedPref = getPreferences(Context.MODE_PRIVATE);
+        int isSaved = sharedPref.getInt(getString(R.string.installation_already_saved), 0);
+        if(isSaved == 0){
+            ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+
+            //ParseObject hs = ParseObject.createWithoutData("HomeServices",homeService.getObjectId());
+            installation.put("user", ParseUser.getCurrentUser());
+            installation.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if(e == null){
+                        Log.d("SUCCESS", "installation saved");
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putInt(getString(R.string.installation_already_saved), 1);
+                        editor.apply();
+                    } else {
+                        Log.e("ERROR", "installation not saved: "+ e.getMessage());
+                    }
+                }
+            });
+
+        }
+
+    }
+
+    private void updateSharedPref(int key, int value){
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(getString(key), value);
+        editor.apply();
     }
 }

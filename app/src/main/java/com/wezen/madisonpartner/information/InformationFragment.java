@@ -152,7 +152,6 @@ public class InformationFragment extends Fragment {
             }
         });
 
-        saveInstallationData();
        // if(ParseUser.getCurrentUser().getInt("userType") == 2){
             getBusinessInformation();
         //}
@@ -287,31 +286,7 @@ public class InformationFragment extends Fragment {
 
     }
 
-    private void saveInstallationData(){
-        final SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        int isSaved = sharedPref.getInt(getString(R.string.installation_already_saved), 0);
-        if(isSaved == 0){
-            ParseInstallation installation = ParseInstallation.getCurrentInstallation();
 
-            //ParseObject hs = ParseObject.createWithoutData("HomeServices",homeService.getObjectId());
-            installation.put("user", ParseUser.getCurrentUser());
-            installation.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if(e == null){
-                        Log.d("SUCCESS", "installation saved");
-                        SharedPreferences.Editor editor = sharedPref.edit();
-                        editor.putInt(getString(R.string.installation_already_saved), 1);
-                        editor.apply();
-                    } else {
-                        Log.e("ERROR", "installation not saved: "+ e.getMessage());
-                    }
-                }
-            });
-
-        }
-
-    }
 
     private void saveBusinessInformation(){
         if(business!= null && validateInput()){
