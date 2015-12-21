@@ -38,6 +38,7 @@ public class SendingNotificationActivity extends AppCompatActivity {
     public static final String PROBLEM_DESCRIPTION = "problem_description";
     public static final String HAS_EMPLOYEE = "hasEmployee";
     public static final String EMPLOYEE_ID = "employee_id";
+    public static final String EMPLOYEE_NAME = "employee_name";
 
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE dd 'de' MMM 'del 'yyyy 'a las' hh:mm a", Locale.getDefault());
@@ -52,6 +53,8 @@ public class SendingNotificationActivity extends AppCompatActivity {
     private String problemDesc;
     private boolean hasEmployee;
     private String employeeId;
+    private boolean notificationSent = false;
+    //private String employeeName;
 
 
     @Override
@@ -70,10 +73,14 @@ public class SendingNotificationActivity extends AppCompatActivity {
             problemDesc = getIntent().getStringExtra(PROBLEM_DESCRIPTION);
             hasEmployee = getIntent().getBooleanExtra(HAS_EMPLOYEE, false);
             employeeId = getIntent().getStringExtra(EMPLOYEE_ID);
+            imageUrl = getIntent().getStringExtra(IMAGE_URL);
+            //employeeName = getIntent().getStringExtra(EMPLOYEE_NAME);
 
         }
 
-       getAttendedBy();
+        if(savedInstanceState == null){
+            getAttendedBy();
+        }
 
     }
 
@@ -87,6 +94,7 @@ public class SendingNotificationActivity extends AppCompatActivity {
         Intent home = new Intent(this, MainActivity.class);
         home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(home);
+        finish();
     }
 
     private View.OnClickListener goBackClickListener = new View.OnClickListener() {
@@ -96,13 +104,14 @@ public class SendingNotificationActivity extends AppCompatActivity {
         }
     };
 
-    private void sendPushToClient(String date, String userID,String name,String imageUrl,String problemDesc){
+    private void sendPushToClient(String date, String userID,String serviceName,String imageUrl,String problemDesc,String attendedBy){
         Map<String,Object> params = new HashMap<>();
         params.put("client",userID);
         params.put("date",date);
-        params.put("homeServiceName",name);
+        params.put("homeServiceName",serviceName);
         params.put("imageUrl",imageUrl);
         params.put("problemDescription",problemDesc);
+        params.put("attendedBy",attendedBy);
         ParseCloud.callFunctionInBackground("sendPushToClient", params, new FunctionCallback<Object>() {
             @Override
             public void done(Object o, ParseException e) {
@@ -140,10 +149,11 @@ public class SendingNotificationActivity extends AppCompatActivity {
                         @Override
                         public void done(ParseException e) {
                             if (e == null) { //el status se actulizó, mandamos el push al cliente
-                                sendPushToClient(date, userId, name, imageUrl, problemDesc);
+                                sendPushToClient(date, userId, name, imageUrl, problemDesc,attendedBy.getUsername());
                                 if(hasEmployee){//y al empleado
                                    // sendPushToEmployee(requestId);
                                 }
+                                notificationSent = true;
                             } else {
                                 //no se actualizó
                                 Log.e("ERROR: ", e.getMessage());
@@ -213,6 +223,14 @@ public class SendingNotificationActivity extends AppCompatActivity {
             });
         } else {
             updateHomeServiceRequestStatus(ParseUser.getCurrentUser());
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(notificationSent){
+            goHome();
         }
     }
 }

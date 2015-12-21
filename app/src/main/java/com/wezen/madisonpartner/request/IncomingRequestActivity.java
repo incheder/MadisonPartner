@@ -295,7 +295,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             intent.putExtra(SendingNotificationActivity.HOME_SERVICE_REQUEST_ID, id);
             intent.putExtra(SendingNotificationActivity.HAS_EMPLOYEE,hasEmployee);
             if(hasEmployee){
-                intent.putExtra(SendingNotificationActivity.HOME_SERVICE_NAME,employeeName);
+                intent.putExtra(SendingNotificationActivity.EMPLOYEE_NAME,employeeName);
                 intent.putExtra(SendingNotificationActivity.EMPLOYEE_ID,employeeId);
             } else {
                 intent.putExtra(SendingNotificationActivity.HOME_SERVICE_NAME,incomingRequest.getProviderName());

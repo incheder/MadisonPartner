@@ -130,6 +130,7 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
             } else if (id == R.id.menu_logout){
                 ParseUser.logOut();
                 updateSharedPref(R.string.installation_already_saved,0);
+                ParseInstallation.getCurrentInstallation().deleteInBackground();
                 goToLogin();
             }
             if(toLaunch != null){
