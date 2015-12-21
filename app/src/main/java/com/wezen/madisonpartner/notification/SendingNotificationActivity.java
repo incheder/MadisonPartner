@@ -151,7 +151,7 @@ public class SendingNotificationActivity extends AppCompatActivity {
                             if (e == null) { //el status se actulizó, mandamos el push al cliente
                                 sendPushToClient(date, userId, name, imageUrl, problemDesc,attendedBy.getUsername());
                                 if(hasEmployee){//y al empleado
-                                   // sendPushToEmployee(requestId);
+                                    sendPushToEmployee(requestId,employeeId);
                                 }
                                 notificationSent = true;
                             } else {
@@ -190,9 +190,10 @@ public class SendingNotificationActivity extends AppCompatActivity {
          return convertedDate;
     }
 
-    private void sendPushToEmployee(String requestId){
+    private void sendPushToEmployee(String requestId, String employeeId){
         Map<String,Object> params = new HashMap<>();
         params.put("requestId", requestId);
+        params.put("employeeId", employeeId);
         ParseCloud.callFunctionInBackground("sendPushToEmployee", params, new FunctionCallback<Object>() {
             @Override
             public void done(Object o, ParseException e) {
