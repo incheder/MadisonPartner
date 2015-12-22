@@ -80,6 +80,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     private String employeeAvatarUrl;
     private String employeeId;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,9 +90,18 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         if(getSupportActionBar()!=null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
+        accept = (Button)findViewById(R.id.incoming_request_accept);
+        decline = (Button)findViewById(R.id.incoming_request_decline);
         if(getIntent().getExtras() != null){
             id = getIntent().getStringExtra(REQUEST_ID);
+            if(ParseUser.getCurrentUser().getInt("userType") == 3){
+             accept.setVisibility(View.GONE);
+                decline.setVisibility(View.GONE);
+            }else{
+                accept.setVisibility(View.VISIBLE);
+                decline.setVisibility(View.VISIBLE);
+
+            }
         }
 
         progressBar = (ProgressBar)findViewById(R.id.progressBarIncomingRequest);
@@ -176,10 +186,10 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         TextView userName = (TextView)findViewById(R.id.incoming_request_name);
         TextView userAddress = (TextView)findViewById(R.id.incoming_request_address);
         TextView description = (TextView)findViewById(R.id.incoming_request_item_description);
-        accept = (Button)findViewById(R.id.incoming_request_accept);
-        decline = (Button)findViewById(R.id.incoming_request_decline);
-        accept.setVisibility(View.VISIBLE);
-        decline.setVisibility(View.VISIBLE);
+
+
+        //accept.setVisibility(View.VISIBLE);
+        //decline.setVisibility(View.VISIBLE);
         gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(request.getLocation(), 14));
         gMap.addMarker(new MarkerOptions().position(request.getLocation()));
         Picasso.with(this).load(request.getUserAvatar()).into(userAvatar);
@@ -297,9 +307,8 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             if(hasEmployee){
                 intent.putExtra(SendingNotificationActivity.EMPLOYEE_NAME,employeeName);
                 intent.putExtra(SendingNotificationActivity.EMPLOYEE_ID,employeeId);
-            } else {
-                intent.putExtra(SendingNotificationActivity.HOME_SERVICE_NAME,incomingRequest.getProviderName());
             }
+            intent.putExtra(SendingNotificationActivity.HOME_SERVICE_NAME,incomingRequest.getProviderName());
             intent.putExtra(SendingNotificationActivity.IMAGE_URL,imageUrl);
             intent.putExtra(SendingNotificationActivity.PROBLEM_DESCRIPTION,problemDesc);
             startActivity(intent);
@@ -315,7 +324,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     @Override
     public void onClick(DialogInterface dialog, int which) {
         enableButtons();
-        isCancelled = which == DialogInterface.BUTTON_NEGATIVE /*&& Utils.isAffectedVersion()*/;
+        isCancelled = which == DialogInterface.BUTTON_NEGATIVE;
     }
 
     private void enableButtons(){

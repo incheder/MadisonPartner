@@ -54,6 +54,7 @@ public class SendingNotificationActivity extends AppCompatActivity {
     private boolean hasEmployee;
     private String employeeId;
     private boolean notificationSent = false;
+    private String attendedByAvatar;
     //private String employeeName;
 
 
@@ -80,6 +81,8 @@ public class SendingNotificationActivity extends AppCompatActivity {
 
         if(savedInstanceState == null){
             getAttendedBy();
+        } else {
+            goHome();
         }
 
     }
@@ -112,6 +115,7 @@ public class SendingNotificationActivity extends AppCompatActivity {
         params.put("imageUrl",imageUrl);
         params.put("problemDescription",problemDesc);
         params.put("attendedBy",attendedBy);
+        params.put("attendedByAvatar",attendedByAvatar);
         ParseCloud.callFunctionInBackground("sendPushToClient", params, new FunctionCallback<Object>() {
             @Override
             public void done(Object o, ParseException e) {
@@ -140,7 +144,7 @@ public class SendingNotificationActivity extends AppCompatActivity {
                 orderSent.setVisibility(View.VISIBLE);
                 if (e == null && parseObject != null) {
                     parseObject.put("status", HomeServiceRequestStatus.ASIGNADO.getValue());
-                    parseObject.put("attendedBy",attendedBy);//TODO if the current user is admin, he can choose an employee to attend the request
+                    parseObject.put("attendedBy", attendedBy);//TODO if the current user is admin, he can choose an employee to attend the request
                     Date dateForService = stringToDate(date);
                     if (dateForService != null) {
                         parseObject.put("dateForService", dateForService);
@@ -149,9 +153,9 @@ public class SendingNotificationActivity extends AppCompatActivity {
                         @Override
                         public void done(ParseException e) {
                             if (e == null) { //el status se actulizó, mandamos el push al cliente
-                                sendPushToClient(date, userId, name, imageUrl, problemDesc,attendedBy.getUsername());
-                                if(hasEmployee){//y al empleado
-                                    sendPushToEmployee(requestId,employeeId);
+                                sendPushToClient(date, userId, name, imageUrl, problemDesc, attendedBy.getUsername());
+                                if (hasEmployee) {//y al empleado
+                                    sendPushToEmployee(requestId, employeeId);
                                 }
                                 notificationSent = true;
                             } else {
@@ -216,6 +220,9 @@ public class SendingNotificationActivity extends AppCompatActivity {
                 @Override
                 public void done(ParseUser parseUser, ParseException e) {
                     if(e== null){
+                        if(parseUser.getParseFile("userImage")!= null){
+                            attendedByAvatar = parseUser.getParseFile("userImage").getUrl();
+                        }
                         updateHomeServiceRequestStatus(parseUser);
                     } else {
                         Log.e("ERROR","empleado no encontrado: " + e.getMessage());
@@ -223,6 +230,9 @@ public class SendingNotificationActivity extends AppCompatActivity {
                 }
             });
         } else {
+            if(ParseUser.getCurrentUser().getParseFile("userImage")!= null){
+                attendedByAvatar = ParseUser.getCurrentUser().getParseFile("userImage").getUrl();
+            }
             updateHomeServiceRequestStatus(ParseUser.getCurrentUser());
         }
     }
