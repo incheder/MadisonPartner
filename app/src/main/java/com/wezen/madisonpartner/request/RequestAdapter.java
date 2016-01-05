@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -81,6 +82,15 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
         }
 
 
+        holder.container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent incomingRequest = new Intent(context,IncomingRequestActivity.class);
+                incomingRequest.putExtra(IncomingRequestActivity.REQUEST_ID,item.getId());
+                // incomingRequest.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(incomingRequest);
+            }
+        });
 
         holder.map.onCreate(null);
         holder.map.onResume();
@@ -116,6 +126,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
         private Button accept;
         private TextView status;
         private MapView map;
+        private LinearLayout container;
 
 
         public RequestHolder(View itemView) {
@@ -130,6 +141,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
             review = (RatingBar)itemView.findViewById(R.id.requestItemRating);
             accept = (Button)itemView.findViewById(R.id.buttonRequestItem);
             map = (MapView)itemView.findViewById(R.id.request_map);
+            container = (LinearLayout)itemView.findViewById(R.id.request_item_container);
             map.setClickable(false);
 
         }
