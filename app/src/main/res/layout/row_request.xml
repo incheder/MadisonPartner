@@ -108,7 +108,8 @@
             android:id="@+id/buttonRequestItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/respond_request"/>
+            android:text="@string/respond_request"
+            android:visibility="gone"/>
 
         <RatingBar
             android:id="@+id/requestItemRating"

@@ -44,6 +44,7 @@
                     android:layout_height="250dp"
                     android:layout_marginBottom="@dimen/elements_margin_request_item"
                     app:liteMode="true"
+                    android:visibility="invisible"
                     />
 
                 <LinearLayout

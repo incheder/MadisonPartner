@@ -94,14 +94,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         decline = (Button)findViewById(R.id.incoming_request_decline);
         if(getIntent().getExtras() != null){
             id = getIntent().getStringExtra(REQUEST_ID);
-            if(ParseUser.getCurrentUser().getInt("userType") == 3){
-             accept.setVisibility(View.GONE);
-                decline.setVisibility(View.GONE);
-            }else{
-                accept.setVisibility(View.VISIBLE);
-                decline.setVisibility(View.VISIBLE);
 
-            }
         }
 
         progressBar = (ProgressBar)findViewById(R.id.progressBarIncomingRequest);
@@ -148,6 +141,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             public void done(ParseObject po, ParseException e) {
                 progressBar.setVisibility(View.GONE);
                 if (e == null) {
+                    map.setVisibility(View.VISIBLE);
                     poToUpdate = po;
                     incomingRequest = new HomeServiceRequest();
                     incomingRequest.setLocation(new LatLng(po.getParseGeoPoint("userLocation").getLatitude(), po.getParseGeoPoint("userLocation").getLongitude()));
@@ -174,6 +168,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
 
 
                 } else {
+                    map.setVisibility(View.INVISIBLE);
                     //ups!
                 }
             }
@@ -196,6 +191,16 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         userName.setText(request.getName());
         userAddress.setText(request.getAddress());
         description.setText(request.getDescription());
+
+        if(ParseUser.getCurrentUser().getInt("userType") == 3 || request.getStatus() == HomeServiceRequestStatus.ASIGNADO || request.getStatus() == HomeServiceRequestStatus.COMPLETO){
+            accept.setVisibility(View.GONE);
+            decline.setVisibility(View.GONE);
+        }else{
+            accept.setVisibility(View.VISIBLE);
+            decline.setVisibility(View.VISIBLE);
+
+        }
+
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
