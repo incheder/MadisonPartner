@@ -158,6 +158,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                     incomingRequest.setAddress(po.getString("address"));
                     incomingRequest.setUserID(po.getParseObject("user").getObjectId());
                     incomingRequest.setProviderName(po.getParseObject("homeService").getString("name"));
+                    incomingRequest.setPhone(po.getString("phone"));
                     setData(incomingRequest);
 
                     ParseFile image = po.getParseObject("homeService").getParseFile("image");
@@ -181,6 +182,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         TextView userName = (TextView)findViewById(R.id.incoming_request_name);
         TextView userAddress = (TextView)findViewById(R.id.incoming_request_address);
         TextView description = (TextView)findViewById(R.id.incoming_request_item_description);
+        TextView phone = (TextView)findViewById(R.id.incoming_request_phone);
 
 
         //accept.setVisibility(View.VISIBLE);
@@ -191,6 +193,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         userName.setText(request.getName());
         userAddress.setText(request.getAddress());
         description.setText(request.getDescription());
+        phone.setText(request.getPhone());
 
         if(ParseUser.getCurrentUser().getInt("userType") == 3 || request.getStatus() == HomeServiceRequestStatus.ASIGNADO || request.getStatus() == HomeServiceRequestStatus.COMPLETO){
             accept.setVisibility(View.GONE);

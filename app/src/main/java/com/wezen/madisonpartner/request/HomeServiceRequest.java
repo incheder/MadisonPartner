@@ -19,6 +19,7 @@ public class HomeServiceRequest {
     private String address;
     private String userID;
     private String providerName;
+    private String phone;
 
     public String getUserAvatar() {
         return userAvatar;
@@ -114,5 +115,13 @@ public class HomeServiceRequest {
 
     public void setProviderName(String providerName) {
         this.providerName = providerName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

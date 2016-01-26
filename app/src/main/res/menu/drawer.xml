@@ -11,13 +11,6 @@
             />
 
         <item
-            android:id="@+id/menu_history"
-            android:checked="false"
-            android:title="@string/drawer_menu_history"
-            android:icon="@drawable/ic_history_black_48dp"
-            />
-
-        <item
             android:id="@+id/menu_settings"
             android:checked="false"
             android:title="@string/drawer_menu_settings"

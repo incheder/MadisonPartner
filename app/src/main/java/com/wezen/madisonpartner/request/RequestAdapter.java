@@ -61,6 +61,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
         holder.review.setMax(item.getReview());
         Picasso.with(context).load(item.getUserAvatar()).into(holder.userAvatar);
         holder.address.setText(item.getAddress());
+        holder.phone.setText(item.getPhone());
         if(item.getStatus()!=null){
             holder.status.setText(item.getStatus().toString());
             setColorByStatus(holder.status,item.getStatus());
@@ -127,6 +128,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
         private TextView status;
         private MapView map;
         private LinearLayout container;
+        private TextView phone;
 
 
         public RequestHolder(View itemView) {
@@ -142,6 +144,8 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
             accept = (Button)itemView.findViewById(R.id.buttonRequestItem);
             map = (MapView)itemView.findViewById(R.id.request_map);
             container = (LinearLayout)itemView.findViewById(R.id.request_item_container);
+            phone = (TextView)itemView.findViewById(R.id.request_phone);
+
             map.setClickable(false);
 
         }

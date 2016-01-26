@@ -121,8 +121,6 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
 
             if(id == R.id.menu_account){
 
-            } else if (id == R.id.menu_history){
-
             } else if (id == R.id.menu_settings){
 
             } else if (id == R.id.menu_help){

@@ -127,6 +127,7 @@ public class RequestListFragment extends Fragment {
                         request.setDate(po.getCreatedAt().toString());
                         request.setUserAvatar(po.getParseObject("user").getParseFile("userImage").getUrl());
                         request.setAddress(po.getString("address"));
+                        request.setPhone(po.getString("phone"));
                         requestList.add(request);
                     }
 

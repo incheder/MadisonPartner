@@ -62,6 +62,12 @@
                     android:id="@+id/request_address"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/request_phone"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    />
 
             </LinearLayout>
 
