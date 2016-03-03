@@ -107,6 +107,22 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wezen.madisonpartner.MainActivity" />
         </activity>
+        <activity
+            android:name=".account.AccountActivity"
+            android:label="@string/title_activity_account"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.wezen.madisonpartner.MainActivity" />
+        </activity>
+        <activity
+            android:name=".password.PasswordActivity"
+            android:label="@string/title_activity_password"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.wezen.madisonpartner.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

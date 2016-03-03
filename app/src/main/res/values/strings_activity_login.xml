@@ -14,4 +14,6 @@
     <string name="error_incorrect_password">Este password es incorrecto</string>
     <string name="error_field_required">Este campo es obligatorio</string>
     <string name="error_password_match">Los passwords son diferentes</string>
+
+
 </resources>

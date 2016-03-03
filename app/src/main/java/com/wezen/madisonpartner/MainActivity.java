@@ -24,6 +24,7 @@ import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.squareup.picasso.Picasso;
+import com.wezen.madisonpartner.account.AccountActivity;
 import com.wezen.madisonpartner.home.DummyFragment;
 import com.wezen.madisonpartner.home.ViewPagerAdapter;
 import com.wezen.madisonpartner.information.InformationFragment;
@@ -120,6 +121,13 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
             int id = menuItem.getItemId();
 
             if(id == R.id.menu_account){
+                toLaunch = new Intent(MainActivity.this, AccountActivity.class);
+                toLaunch.putExtra(AccountActivity.USERNAME,userName);
+                toLaunch.putExtra(AccountActivity.EMAIL,userEmail);
+                toLaunch.putExtra(AccountActivity.IMAGE_URL,imageUrl);
+                //toLaunch.putExtra(AccountActivity.LASTNAME,userLastName);
+                //toLaunch.putExtra(AccountActivity.PHONE,phone);
+                startActivity(toLaunch);
 
             } else if (id == R.id.menu_settings){
 
