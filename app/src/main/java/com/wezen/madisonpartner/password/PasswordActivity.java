@@ -1,10 +1,27 @@
 package com.wezen.madisonpartner.password;
 
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.widget.EditText;
+
+import com.jakewharton.rxbinding.view.RxView;
+import com.parse.LogInCallback;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+import com.wezen.madisonpartner.R;
+
+import butterknife.Bind;
+import butterknife.BindString;
+import butterknife.ButterKnife;
+import rx.functions.Action1;
 
 public class PasswordActivity extends AppCompatActivity {
 
-   /* @Bind(R.id.oldPassword)
+    @Bind(R.id.oldPassword)
     EditText editTextOldPassword;
     @Bind(R.id.newPassword)
     EditText editTextNewPassword;
@@ -30,9 +47,12 @@ public class PasswordActivity extends AppCompatActivity {
         if(getSupportActionBar()!= null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        RxView.clicks(fab).subscribe(aVoid -> {
-            if (validateLocalFields()) {
-                validateInBackground();
+        RxView.clicks(fab).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                if (PasswordActivity.this.validateLocalFields()) {
+                    PasswordActivity.this.validateInBackground();
+                }
             }
         });
     }
@@ -71,24 +91,30 @@ public class PasswordActivity extends AppCompatActivity {
 
 
     private void validateInBackground(){
-        ParseUser.logInInBackground(ParseUser.getCurrentUser().getUsername(), editTextOldPassword.getText().toString(), (parseUser, e) -> {
-            if (e == null) {
-                //old password is correct
-                parseUser.setPassword(editTextNewPassword.getText().toString());
-                parseUser.saveInBackground(e1 -> {
-                    if (e1 == null) {
-                        ParseUser.getCurrentUser().fetchInBackground();
-                    } else {//ups
+        ParseUser.logInInBackground(ParseUser.getCurrentUser().getUsername(), editTextOldPassword.getText().toString(), new LogInCallback() {
+            @Override
+            public void done(ParseUser parseUser, ParseException e) {
+                if (e == null) {
+                    //old password is correct
+                    parseUser.setPassword(editTextNewPassword.getText().toString());
+                    parseUser.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e1) {
+                            if (e1 == null) {
+                                ParseUser.getCurrentUser().fetchInBackground();
+                            } else {//ups
 
-                    }
+                            }
 
-                });
+                        }
+                    });
 
 
-            } else {//ups
+                } else {//ups
 
+                }
             }
         });
-    }*/
+    }
 
 }
