@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -79,6 +80,8 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     private String employeeName;
     private String employeeAvatarUrl;
     private String employeeId;
+    private LinearLayout layoutStatus;
+    private TextView statusLabel;
 
 
     @Override
@@ -97,7 +100,9 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
 
         }
 
+        layoutStatus = (LinearLayout)findViewById(R.id.request_layout_status);
         progressBar = (ProgressBar)findViewById(R.id.progressBarIncomingRequest);
+        statusLabel = (TextView)findViewById(R.id.request_status_label);
 
         map = (MapView)findViewById(R.id.incomming_request_map);
         map.setClickable(false);
@@ -195,7 +200,10 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         description.setText(request.getDescription());
         phone.setText(request.getPhone());
 
-        if(ParseUser.getCurrentUser().getInt("userType") == 3 || request.getStatus() == HomeServiceRequestStatus.ASIGNADO || request.getStatus() == HomeServiceRequestStatus.COMPLETO){
+        if(ParseUser.getCurrentUser().getInt("userType") == 3
+                || request.getStatus() == HomeServiceRequestStatus.ASIGNADO
+                || request.getStatus() == HomeServiceRequestStatus.COMPLETO
+                || request.getStatus() == HomeServiceRequestStatus.CANCELADO){
             accept.setVisibility(View.GONE);
             decline.setVisibility(View.GONE);
         }else{
@@ -240,6 +248,9 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                 updateHomeServiceRequestStatus(HomeServiceRequestStatus.RECHAZADO);
             }
         });
+
+        layoutStatus.setBackgroundColor(Utils.getColorByStatus(this,request.getStatus()));
+        statusLabel.setText(request.getStatus().getValue() == -1 ? "" :request.getStatus().toString());
 
     }
 
