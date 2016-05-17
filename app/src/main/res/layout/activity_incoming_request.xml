@@ -150,6 +150,27 @@
 
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:gravity="center"
+                        android:id="@+id/terminate_service_layout">
+
+                        <Button
+                            android:id="@+id/terminate_service_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/terminate_service"
+                            android:layout_marginRight="@dimen/elements_margin_request_item"
+                            android:layout_marginEnd="@dimen/elements_margin_request_item"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:theme="@style/AppTheme.AcceptRequestButton"
+                            android:textColor="@color/button_text_color"
+                            />
+
+                    </LinearLayout>
+
 
 
                 </LinearLayout>

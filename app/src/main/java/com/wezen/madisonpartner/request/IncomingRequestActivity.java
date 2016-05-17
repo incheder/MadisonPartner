@@ -82,6 +82,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     private String employeeId;
     private LinearLayout layoutStatus;
     private TextView statusLabel;
+    private LinearLayout terminateServiceLayout;
 
 
     @Override
@@ -103,6 +104,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         layoutStatus = (LinearLayout)findViewById(R.id.request_layout_status);
         progressBar = (ProgressBar)findViewById(R.id.progressBarIncomingRequest);
         statusLabel = (TextView)findViewById(R.id.request_status_label);
+        terminateServiceLayout = (LinearLayout)findViewById(R.id.terminate_service_layout);
 
         map = (MapView)findViewById(R.id.incomming_request_map);
         map.setClickable(false);
@@ -206,6 +208,13 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                 || request.getStatus() == HomeServiceRequestStatus.CANCELADO){
             accept.setVisibility(View.GONE);
             decline.setVisibility(View.GONE);
+            if(request.getStatus() == HomeServiceRequestStatus.ASIGNADO){
+                terminateServiceLayout.setVisibility(View.VISIBLE);
+            } else{
+                terminateServiceLayout.setVisibility(View.GONE);
+
+            }
+
         }else{
             accept.setVisibility(View.VISIBLE);
             decline.setVisibility(View.VISIBLE);
