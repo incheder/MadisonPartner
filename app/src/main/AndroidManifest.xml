@@ -39,12 +39,14 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".login.LoginActivity"
             android:label="@string/title_activity_login"
-            android:windowSoftInputMode="adjustResize|stateVisible" >
+            android:windowSoftInputMode="adjustResize|stateVisible"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -55,7 +57,8 @@
             android:name=".request.IncomingRequestActivity"
             android:label="@string/title_activity_incoming_request"
             android:parentActivityName=".MainActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wezen.madisonpartner.MainActivity" />
@@ -94,7 +97,8 @@
         <activity
             android:name=".employees.EmployeeListActivity"
             android:label="@string/title_activity_employee_list"
-            android:parentActivityName=".request.IncomingRequestActivity" >
+            android:parentActivityName=".request.IncomingRequestActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wezen.madisonpartner.request.IncomingRequestActivity" />
@@ -102,7 +106,8 @@
         <activity
             android:name=".notification.SendingNotificationActivity"
             android:label="@string/title_activity_sending_notification"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wezen.madisonpartner.MainActivity" />
@@ -110,7 +115,8 @@
         <activity
             android:name=".account.AccountActivity"
             android:label="@string/title_activity_account"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wezen.madisonpartner.MainActivity" />
@@ -118,7 +124,8 @@
         <activity
             android:name=".password.PasswordActivity"
             android:label="@string/title_activity_password"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wezen.madisonpartner.MainActivity" />
