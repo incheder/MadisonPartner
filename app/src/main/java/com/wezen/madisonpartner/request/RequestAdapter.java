@@ -22,8 +22,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.Picasso;
 import com.wezen.madisonpartner.R;
 
-import org.json.JSONException;
-
 import java.util.List;
 
 /**
@@ -67,7 +65,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
             setColorByStatus(holder.status,item.getStatus());
         }
 
-        if(item.getStatus() != HomeServiceRequestStatus.ENVIADO){
+        if(item.getStatus() != HomeServiceRequestStatus.RECIBIDO){
             holder.accept.setVisibility(View.GONE);
         } else {
             holder.accept.setOnClickListener(new View.OnClickListener() {
@@ -154,7 +152,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestH
     private void setColorByStatus(TextView textView, HomeServiceRequestStatus status){
         int color = ContextCompat.getColor(context, R.color.transparent);
         switch (status) {
-            case ENVIADO:
+            case RECIBIDO:
                 color = ContextCompat.getColor(context, R.color.palette_green);
                 break;
             case ASIGNADO:

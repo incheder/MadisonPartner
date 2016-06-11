@@ -29,7 +29,7 @@ public class Utils {
     public static int getColorByStatus(Context context, HomeServiceRequestStatus status){
         int color = ContextCompat.getColor(context, R.color.transparent);
         switch (status) {
-            case ENVIADO:
+            case RECIBIDO:
                 color = ContextCompat.getColor(context, R.color.palette_green);
                 break;
             case ASIGNADO:

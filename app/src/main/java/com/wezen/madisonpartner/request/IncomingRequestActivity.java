@@ -4,10 +4,10 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -26,7 +27,9 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.FunctionCallback;
 import com.parse.GetCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -36,7 +39,6 @@ import com.parse.SaveCallback;
 import com.squareup.picasso.Picasso;
 import com.wezen.madisonpartner.R;
 import com.wezen.madisonpartner.employees.Employee;
-import com.wezen.madisonpartner.employees.Employee$$Parcelable;
 import com.wezen.madisonpartner.employees.EmployeeListActivity;
 import com.wezen.madisonpartner.notification.SendingNotificationActivity;
 import com.wezen.madisonpartner.request.dialogs.DateDialogFragment;
@@ -44,15 +46,16 @@ import com.wezen.madisonpartner.request.dialogs.IncomingRequestDialogFragment;
 import com.wezen.madisonpartner.request.dialogs.TimeDialogFragment;
 import com.wezen.madisonpartner.utils.Utils;
 
-import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -83,6 +86,8 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     private LinearLayout layoutStatus;
     private TextView statusLabel;
     private LinearLayout terminateServiceLayout;
+    private Button terminate;
+    private String clientId;
 
 
     @Override
@@ -96,6 +101,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         }
         accept = (Button)findViewById(R.id.incoming_request_accept);
         decline = (Button)findViewById(R.id.incoming_request_decline);
+        terminate = (Button)findViewById(R.id.terminate_service_button);
         if(getIntent().getExtras() != null){
             id = getIntent().getStringExtra(REQUEST_ID);
 
@@ -161,11 +167,13 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                     incomingRequest.setDate(po.getCreatedAt().toString());
                     if (po.getParseObject("user").getParseFile("userImage") != null) {
                         incomingRequest.setUserAvatar(po.getParseObject("user").getParseFile("userImage").getUrl());
+
                     }
                     incomingRequest.setAddress(po.getString("address"));
                     incomingRequest.setUserID(po.getParseObject("user").getObjectId());
                     incomingRequest.setProviderName(po.getParseObject("homeService").getString("name"));
                     incomingRequest.setPhone(po.getString("phone"));
+                    incomingRequest.setReview(po.getInt("rating"));
                     setData(incomingRequest);
 
                     ParseFile image = po.getParseObject("homeService").getParseFile("image");
@@ -190,6 +198,8 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         TextView userAddress = (TextView)findViewById(R.id.incoming_request_address);
         TextView description = (TextView)findViewById(R.id.incoming_request_item_description);
         TextView phone = (TextView)findViewById(R.id.incoming_request_phone);
+        LinearLayout layoutRating = (LinearLayout)findViewById(R.id.incoming_request_layout_rating);
+        RatingBar ratingBar = (RatingBar)findViewById(R.id.incoming_request_ratingBar);
 
 
         //accept.setVisibility(View.VISIBLE);
@@ -257,9 +267,38 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                 updateHomeServiceRequestStatus(HomeServiceRequestStatus.RECHAZADO);
             }
         });
+        terminate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //pushServiceComplete();
+                poToUpdate.put("status", HomeServiceRequestStatus.COMPLETO.getValue());
+                poToUpdate.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if(e == null){
+                            layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.COMPLETO));
+                            statusLabel.setText(HomeServiceRequestStatus.COMPLETO.toString());
+                            terminate.setVisibility(View.GONE);
+                            pushServiceComplete();
+                        } else{
+
+                        }
+                    }
+                });
+
+            }
+        });
 
         layoutStatus.setBackgroundColor(Utils.getColorByStatus(this,request.getStatus()));
         statusLabel.setText(request.getStatus().getValue() == -1 ? "" :request.getStatus().toString());
+        layoutStatus.setVisibility(View.VISIBLE);
+        if(request.getStatus() == HomeServiceRequestStatus.COMPLETO && request.getReview() > 0){
+            layoutRating.setVisibility(View.VISIBLE);
+            ratingBar.setRating(request.getReview());
+            //TODO add the client's comment
+        } else {
+            layoutRating.setVisibility(View.GONE);
+        }
 
     }
 
@@ -389,6 +428,30 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                     Toast.makeText(IncomingRequestActivity.this, R.string.we_could_not_comunicate_with_our_mothership, Toast.LENGTH_SHORT).show();
                     Log.e("ERROR","Home service request not updated: " + e.getMessage());
                 }
+            }
+        });
+    }
+
+    private void pushServiceComplete(){
+        Map<String,Object> params = new HashMap<>();
+        params.put("userId",poToUpdate.getParseUser("user").getObjectId());
+        params.put("requestId",poToUpdate.getObjectId());
+        params.put("homeServiceName", ParseUser.getCurrentUser().getUsername());
+        ParseFile file = ParseUser.getCurrentUser().getParseFile("userImage");
+        if(file != null){
+            params.put("avatarUrl", file.getUrl());
+
+        }
+
+        ParseCloud.callFunctionInBackground("sendServiceCompletedPush",params,new FunctionCallback<Object>() {
+            @Override
+            public void done(Object o, ParseException e) {
+                if(e == null){
+
+                }else {
+
+                }
+
             }
         });
     }

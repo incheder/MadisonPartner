@@ -7,7 +7,7 @@ import java.util.Map;
  * Created by eder on 4/13/15.
  */
 public enum HomeServiceRequestStatus {
-    ENVIADO(0),
+    RECIBIDO(0),
     ASIGNADO(1),
     CANCELADO(2),
     COMPLETO(3),

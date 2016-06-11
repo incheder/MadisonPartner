@@ -185,8 +185,8 @@
             android:layout_margin="@dimen/fab_margin"
             android:clickable="true"
             android:elevation="@dimen/elevation_fab"
-            android:src="@drawable/ic_add_white_24dp"
-            app:backgroundTint="@color/fab_summary"
+            android:src="@drawable/ic_done_white_24dp"
+            app:backgroundTint="@color/accent"
             tools:ignore="UnusedAttribute" />
 
     </RelativeLayout>

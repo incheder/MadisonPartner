@@ -21,6 +21,7 @@ public class HomeServiceRequest {
     private String providerName;
     private String phone;
 
+
     public String getUserAvatar() {
         return userAvatar;
     }

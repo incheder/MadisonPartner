@@ -65,6 +65,7 @@ public class CategoriesAdapter extends
 		holder.categoryName.setText(item.getName());
 		holder.categoryImage.setBackgroundColor(Color.parseColor(item.getMainColor()));
 		Picasso.with(context).load(item.getImage()).into(holder.categoryImage);
+		holder.categoryImage.setColorFilter(Color.WHITE);
 		holder.row.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

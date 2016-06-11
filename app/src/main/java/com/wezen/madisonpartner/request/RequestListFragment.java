@@ -85,9 +85,15 @@ public class RequestListFragment extends Fragment {
         requestList = new ArrayList<>();
         adapter = new RequestAdapter(requestList,getActivity());
         recyclerViewRequestList.setAdapter(adapter);
-        getList(null);
+
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getList(null);
     }
 
     private void getList(HomeServiceRequestStatus status) {
@@ -105,7 +111,7 @@ public class RequestListFragment extends Fragment {
             queryRequest.whereEqualTo("attendedBy", ParseUser.getCurrentUser());
         }
         //TODO if userType 3 query for attendedBy
-        // queryRequest.whereNotEqualTo("status", HomeServiceRequestStatus.ENVIADO.getValue());
+        // queryRequest.whereNotEqualTo("status", HomeServiceRequestStatus.RECIBIDO.getValue());
         queryRequest.include("homeService");
         queryRequest.include("user");
         queryRequest.orderByDescending("createdAt");
@@ -165,7 +171,7 @@ public class RequestListFragment extends Fragment {
                 getList(null);
                 break;
             case R.id.send:
-                getList(HomeServiceRequestStatus.ENVIADO);
+                getList(HomeServiceRequestStatus.RECIBIDO);
                 break;
             case R.id.asigned:
                 getList(HomeServiceRequestStatus.ASIGNADO);
