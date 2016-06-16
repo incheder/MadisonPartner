@@ -3,6 +3,7 @@ package com.wezen.madisonpartner.account;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
@@ -63,40 +64,42 @@ public class AccountActivity extends DialogActivity {
         accountEmail = (EditText)findViewById(R.id.accountEmailEditText);
 
 
-        Button save = (Button)findViewById(R.id.accountSave);
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final ParseUser user = ParseUser.getCurrentUser();
-                if(!TextUtils.isEmpty(lastNameEditText.getText())){
-                    user.put("lastName",lastNameEditText.getText().toString());
-                }
-                if(!TextUtils.isEmpty(phoneEditText.getText())){
-                    user.put("phone",phoneEditText.getText().toString());
-                }
-                if(!TextUtils.isEmpty(accountName.getText())){
-                    user.put("userName",accountName.getText().toString());
-                }
-                if(!TextUtils.isEmpty(accountEmail.getText())){
-                    user.put("email", accountEmail.getText().toString());
-                }
-                if(avatarBitmap!= null){
-                    final ParseFile pf = new ParseFile(user.getObjectId()+ "_avatar_image.jpeg",bitmapToByteArray(avatarBitmap));
-                    pf.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if(e==null){
-                                user.put("userImage",pf);
+        FloatingActionButton save = (FloatingActionButton)findViewById(R.id.accountSave);
+        if (save != null) {
+            save.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final ParseUser user = ParseUser.getCurrentUser();
+                    if(!TextUtils.isEmpty(lastNameEditText.getText())){
+                        user.put("lastName",lastNameEditText.getText().toString());
+                    }
+                    if(!TextUtils.isEmpty(phoneEditText.getText())){
+                        user.put("phone",phoneEditText.getText().toString());
+                    }
+                    if(!TextUtils.isEmpty(accountName.getText())){
+                        user.put("userName",accountName.getText().toString());
+                    }
+                    if(!TextUtils.isEmpty(accountEmail.getText())){
+                        user.put("email", accountEmail.getText().toString());
+                    }
+                    if(avatarBitmap!= null){
+                        final ParseFile pf = new ParseFile(user.getObjectId()+ "_avatar_image.jpeg",bitmapToByteArray(avatarBitmap));
+                        pf.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if(e==null){
+                                    user.put("userImage",pf);
+                                }
+                                saveParseUSer(user);
                             }
-                            saveParseUSer(user);
-                        }
-                    });
-                } else {
-                    saveParseUSer(user);
-                }
+                        });
+                    } else {
+                        saveParseUSer(user);
+                    }
 
-            }
-        });
+                }
+            });
+        }
 
         if(getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -160,4 +163,8 @@ public class AccountActivity extends DialogActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 }

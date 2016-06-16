@@ -13,7 +13,8 @@
         android:gravity="center"
         android:layout_marginTop="@dimen/bottomsheet_elements_margin"
         android:layout_marginBottom="@dimen/bottomsheet_elements_margin"
-        android:textColor="@android:color/tertiary_text_light"/>
+        android:textColor="@android:color/tertiary_text_light"
+        android:textStyle="bold"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerViewCategories"

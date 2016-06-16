@@ -10,6 +10,7 @@
     <dimen name="card_item_padding">10dp</dimen>
     <dimen name="column_width">250dp</dimen>
     <dimen name="bottomsheet_elements_margin">5dp</dimen>
+    <dimen name="bottomsheet_extra_elements_margin">10dp</dimen>
     <dimen name="bottomsheet_image_width">40dp</dimen>
     <dimen name="bottomsheet_image_height">40dp</dimen>
     <dimen name="order_sent_margin_image">10dp</dimen>

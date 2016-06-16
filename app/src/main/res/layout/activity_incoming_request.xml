@@ -28,10 +28,11 @@
             >
 
             <LinearLayout
-
+                android:id="@+id/incoming_request_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <com.google.android.gms.maps.MapView
                     android:id="@+id/incomming_request_map"

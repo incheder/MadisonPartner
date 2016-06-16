@@ -18,8 +18,10 @@
             android:layout_height="match_parent">
 
             <RelativeLayout
+                android:id="@+id/informationFragmentContent"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="gone">
 
                 <android.support.v7.widget.CardView
                     android:id="@+id/informationCardImage"
@@ -143,7 +145,8 @@
                             android:layout_height="wrap_content"
                             android:text="@string/current_categories"
                             android:textAppearance="?android:attr/textAppearanceMedium"
-
+                            android:layout_marginBottom="@dimen/elements_margin"
+                            android:textStyle="bold"
                             />
 
 
@@ -181,7 +184,8 @@
             android:elevation="@dimen/elevation_fab"
             android:src="@drawable/ic_done_white_24dp"
             app:backgroundTint="@color/accent"
-            tools:ignore="UnusedAttribute" />
+            tools:ignore="UnusedAttribute"
+            android:visibility="gone"/>
 
 
         <ProgressBar

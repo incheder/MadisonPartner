@@ -88,6 +88,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     private LinearLayout terminateServiceLayout;
     private Button terminate;
     private String clientId;
+    private LinearLayout layoutContent;
 
 
     @Override
@@ -111,6 +112,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         progressBar = (ProgressBar)findViewById(R.id.progressBarIncomingRequest);
         statusLabel = (TextView)findViewById(R.id.request_status_label);
         terminateServiceLayout = (LinearLayout)findViewById(R.id.terminate_service_layout);
+        layoutContent = (LinearLayout)findViewById(R.id.incoming_request_content);
 
         map = (MapView)findViewById(R.id.incomming_request_map);
         map.setClickable(false);
@@ -152,6 +154,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         query.getInBackground(id, new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject po, ParseException e) {
+                layoutContent.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
                 if (e == null) {
                     map.setVisibility(View.VISIBLE);

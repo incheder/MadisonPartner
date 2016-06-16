@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -81,6 +82,8 @@ public class InformationFragment extends Fragment {
     private ImageView adminCategories;
     private final static int PICK_IMAGE_REQUEST = 1;
     private Bitmap businessBitmap;
+    private RelativeLayout layoutContent;
+    private FloatingActionButton fabSave;
 
 
     /**
@@ -125,11 +128,12 @@ public class InformationFragment extends Fragment {
         rvCategories = (RecyclerView)view.findViewById(R.id.recyclerViewBusinessCategories);
         layoutManager = new org.solovyev.android.views.llm.LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         rvCategories.setLayoutManager(layoutManager);
+        layoutContent = (RelativeLayout)view.findViewById(R.id.informationFragmentContent);
 
 
         editTextName = (EditText)view.findViewById(R.id.editTextBusinessName);
         editTextDescription = (EditText)view.findViewById(R.id.editTextBusinessDescription);
-        FloatingActionButton fabSave = (FloatingActionButton)view.findViewById(R.id.fabSaveBusinessInfo);
+        fabSave = (FloatingActionButton)view.findViewById(R.id.fabSaveBusinessInfo);
         fabSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -170,6 +174,8 @@ public class InformationFragment extends Fragment {
         queryServices.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
+                fabSave.setVisibility(View.VISIBLE);
+                layoutContent.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
                 if (e == null) {
                     business = parseObject;
@@ -378,16 +384,17 @@ public class InformationFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        switch(requestCode) {
-            case PICK_IMAGE_REQUEST:
-                businessBitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
-                // TODO use bitmap
-                businessImage.setImageBitmap(businessBitmap);
-                break;
-            default:
-                super.onActivityResult(requestCode, resultCode, data);
-                break;
+        if(resultCode != 0){
+            switch(requestCode) {
+                case PICK_IMAGE_REQUEST:
+                    businessBitmap = ImagePicker.getImageFromResult(getActivity(), resultCode, data);
+                    // TODO use bitmap
+                    businessImage.setImageBitmap(businessBitmap);
+                    break;
+                default:
+                    super.onActivityResult(requestCode, resultCode, data);
+                    break;
+            }
         }
     }
 
