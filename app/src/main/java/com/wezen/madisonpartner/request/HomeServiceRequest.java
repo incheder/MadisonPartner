@@ -2,6 +2,8 @@ package com.wezen.madisonpartner.request;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.Date;
+
 /**
  * Created by eder on 15/09/2015.
  */
@@ -20,6 +22,7 @@ public class HomeServiceRequest {
     private String userID;
     private String providerName;
     private String phone;
+    private Date dateForService;
 
 
     public String getUserAvatar() {
@@ -124,5 +127,13 @@ public class HomeServiceRequest {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Date getDateForService() {
+        return dateForService;
+    }
+
+    public void setDateForService(Date dateForService) {
+        this.dateForService = dateForService;
     }
 }

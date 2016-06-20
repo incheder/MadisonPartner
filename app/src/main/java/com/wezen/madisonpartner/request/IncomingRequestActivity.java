@@ -87,6 +87,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     private TextView statusLabel;
     private LinearLayout terminateServiceLayout;
     private Button terminate;
+    private Button cancel;
     private String clientId;
     private LinearLayout layoutContent;
 
@@ -103,6 +104,8 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         accept = (Button)findViewById(R.id.incoming_request_accept);
         decline = (Button)findViewById(R.id.incoming_request_decline);
         terminate = (Button)findViewById(R.id.terminate_service_button);
+        cancel = (Button)findViewById(R.id.cancel_service_button);
+
         if(getIntent().getExtras() != null){
             id = getIntent().getStringExtra(REQUEST_ID);
 
@@ -177,6 +180,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                     incomingRequest.setProviderName(po.getParseObject("homeService").getString("name"));
                     incomingRequest.setPhone(po.getString("phone"));
                     incomingRequest.setReview(po.getInt("rating"));
+                    incomingRequest.setDateForService(po.getDate("dateForService"));
                     setData(incomingRequest);
 
                     ParseFile image = po.getParseObject("homeService").getParseFile("image");
@@ -221,11 +225,12 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                 || request.getStatus() == HomeServiceRequestStatus.CANCELADO){
             accept.setVisibility(View.GONE);
             decline.setVisibility(View.GONE);
-            if(request.getStatus() == HomeServiceRequestStatus.ASIGNADO){
-                terminateServiceLayout.setVisibility(View.VISIBLE);
-            } else{
-                terminateServiceLayout.setVisibility(View.GONE);
-
+            if(request.getStatus() == HomeServiceRequestStatus.ASIGNADO && checkAfterDateForService(incomingRequest.getDateForService()) ){
+                terminate.setVisibility(View.VISIBLE);
+                cancel.setVisibility(View.GONE);
+            } else if(request.getStatus() == HomeServiceRequestStatus.ASIGNADO){
+                terminate.setVisibility(View.GONE);
+                cancel.setVisibility(View.VISIBLE);
             }
 
         }else{
@@ -292,6 +297,13 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             }
         });
 
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         layoutStatus.setBackgroundColor(Utils.getColorByStatus(this,request.getStatus()));
         statusLabel.setText(request.getStatus().getValue() == -1 ? "" :request.getStatus().toString());
         layoutStatus.setVisibility(View.VISIBLE);
@@ -303,6 +315,13 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             layoutRating.setVisibility(View.GONE);
         }
 
+    }
+
+    private boolean checkAfterDateForService(Date dateForService) {
+        if(new Date().after(dateForService)){
+            return true;
+        }
+        return false;
     }
 
     @Override
