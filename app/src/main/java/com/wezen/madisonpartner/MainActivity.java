@@ -3,17 +3,14 @@ package com.wezen.madisonpartner;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.Image;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,15 +22,17 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.squareup.picasso.Picasso;
 import com.wezen.madisonpartner.account.AccountActivity;
-import com.wezen.madisonpartner.home.DummyFragment;
 import com.wezen.madisonpartner.home.ViewPagerAdapter;
 import com.wezen.madisonpartner.information.InformationFragment;
 import com.wezen.madisonpartner.information.SelectImageDialogFragment;
 import com.wezen.madisonpartner.login.LoginActivity;
+import com.wezen.madisonpartner.password.PasswordActivity;
 import com.wezen.madisonpartner.request.RequestListFragment;
 import com.wezen.madisonpartner.utils.DialogActivity;
 
-public class MainActivity extends DialogActivity implements SelectImageDialogFragment.OnClickSelectImageDialogListener {
+import java.text.DecimalFormat;
+
+public class MainActivity extends DialogActivity implements SelectImageDialogFragment.OnClickSelectImageDialogListener, InformationFragment.OnBusinessInformationReadyListener {
 
     private NavigationView navigationView;
     private String userName;
@@ -42,6 +41,7 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
     private DrawerLayout drawerLayout;
     private InformationFragment infoFragment;
     private SharedPreferences sharedPref;
+    private TextView ratingTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,12 +100,12 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
     private void fillNavigationViewHeader(){
         ImageView imageAvatar = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.profile_image);
         TextView textViewUsername = (TextView) navigationView.getHeaderView(0).findViewById(R.id.username);
-        TextView textViewEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email);
+        ratingTextView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.navigationViewRating);
         ParseUser user = ParseUser.getCurrentUser();
         userName = user.getUsername();
         userEmail = user.getEmail();
         textViewUsername.setText(userName);
-        textViewEmail.setText(userEmail);
+        //ratingTextView.setText(userEmail);
         if(user.getParseFile("userImage")!= null){
             imageUrl = user.getParseFile("userImage").getUrl();
             Picasso.with(this).load(imageUrl).into(imageAvatar);
@@ -117,10 +117,10 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
         @Override
         public boolean onNavigationItemSelected(MenuItem menuItem) {
             Intent toLaunch = null;
-
             int id = menuItem.getItemId();
 
             if(id == R.id.menu_account){
+
                 toLaunch = new Intent(MainActivity.this, AccountActivity.class);
                 toLaunch.putExtra(AccountActivity.USERNAME,userName);
                 toLaunch.putExtra(AccountActivity.EMAIL,userEmail);
@@ -129,22 +129,27 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
                 //toLaunch.putExtra(AccountActivity.PHONE,phone);
                 startActivity(toLaunch);
 
-            } else if (id == R.id.menu_settings){
+            } else if (id == R.id.menu_password){
+                toLaunch = new Intent(MainActivity.this, PasswordActivity.class);
 
-            } else if (id == R.id.menu_help){
+            } /*else if (id == R.id.menu_help){
 
-            } else if (id == R.id.menu_logout){
+            }*/ else if (id == R.id.menu_logout){
                 ParseUser.logOut();
                 updateSharedPref(R.string.installation_already_saved, 0);
                 ParseInstallation.getCurrentInstallation().remove("channels");
                 ParseInstallation.getCurrentInstallation().saveInBackground();
                 goToLogin();
             }
+
+            menuItem.setChecked(false);
+            drawerLayout.closeDrawers();
             if(toLaunch != null){
-                menuItem.setChecked(true);
+                //menuItem.setChecked(true);
                 startActivity(toLaunch);
-                drawerLayout.closeDrawers();
             }
+
+
             return true;
         }
     };
@@ -198,5 +203,10 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(getString(key), value);
         editor.apply();
+    }
+
+    @Override
+    public void seRating(Double rating) {
+        ratingTextView.setText(String.valueOf(  new DecimalFormat("#.#").format(rating) ));
     }
 }

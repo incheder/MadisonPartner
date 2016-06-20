@@ -86,5 +86,7 @@
     <string name="you_can_not_use_the_same_password">El nuevo password debe ser diferente al anterior</string>
     <string name="terminate_service">Finalizar servicio</string>
     <string name="my_rating">Calificación obtenida</string>
+    <string name="drawer_menu_password">Password</string>
+    <string name="cancel_service">Cancelar servicio</string>
 
 </resources>
