@@ -97,7 +97,8 @@
             android:paddingLeft="@dimen/card_item_padding"
             android:paddingRight="@dimen/card_item_padding"
             android:gravity="center"
-            android:layout_gravity="end"/>
+            android:layout_gravity="end"
+            android:layout_marginBottom="@dimen/elements_margin_request_item"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -108,7 +109,8 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:paddingLeft="@dimen/card_item_padding"
             android:paddingRight="@dimen/card_item_padding"
-            android:gravity="end"/>
+            android:gravity="end"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/buttonRequestItem"
