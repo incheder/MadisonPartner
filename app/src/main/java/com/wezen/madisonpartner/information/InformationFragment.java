@@ -84,6 +84,12 @@ public class InformationFragment extends Fragment {
     private Bitmap businessBitmap;
     private RelativeLayout layoutContent;
     private FloatingActionButton fabSave;
+    private OnBusinessInformationReadyListener mListener;
+
+    public interface OnBusinessInformationReadyListener {
+        // TODO: Update argument type and name
+        void seRating( Double rating);
+    }
 
 
     /**
@@ -185,6 +191,8 @@ public class InformationFragment extends Fragment {
                     if (parseObject.getParseFile("image") != null) {
                         Picasso.with(getActivity()).load((parseObject.getParseFile("image").getUrl())).into(businessImage);
                     }
+                    Double starts = parseObject.getDouble("stars");
+                    mListener.seRating(starts);
 
                     List<ParseObject> list = parseObject.getList("Category");
                     currentCategories = new ArrayList<>();
@@ -419,6 +427,17 @@ public class InformationFragment extends Fragment {
                 }
             }
         });
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnBusinessInformationReadyListener) {
+            mListener = (OnBusinessInformationReadyListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnBusinessInformationReadyListener");
+        }
     }
 
 }
