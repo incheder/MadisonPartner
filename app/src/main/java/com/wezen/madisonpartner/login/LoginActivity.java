@@ -69,68 +69,68 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         if(currentUser != null){
             goToCategories();
             finish();
+        } else {
+            setContentView(R.layout.activity_login);
+            // Set up the login form.
+            mEmailView = (EditText)findViewById(R.id.navigationViewRating);
+            //populateAutoComplete();
+
+            mPasswordView = (EditText) findViewById(R.id.password);
+            mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                    if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                        attemptLogin();
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+            mRepeatPasswordView = (EditText) findViewById(R.id.repeatPassword);
+            mRepeatPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                    if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                        attemptLogin();
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+            final Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+            mEmailSignInButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    attemptLogin();
+                }
+            });
+
+            signin = (TextView)findViewById(R.id.sign_textView);
+            signin.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(signin.getText().toString().equals(getResources().getString(R.string.action_sign_in))){
+                        signin.setText(getResources().getString(R.string.action_register));
+                        mEmailSignInButton.setText(getResources().getString(R.string.action_sign_in));
+                        mRepeatPasswordView.setVisibility(View.GONE);
+                        loginMode =true;
+                    } else {
+                        signin.setText(getResources().getString(R.string.action_sign_in));
+                        mEmailSignInButton.setText(getResources().getString(R.string.action_register));
+                        mRepeatPasswordView.setVisibility(View.VISIBLE);
+                        loginMode =false;
+                    }
+
+                }
+            });
+
+            mLoginFormView = findViewById(R.id.login_form);
+            mProgressView = findViewById(R.id.login_progress);
+
         }
-        setContentView(R.layout.activity_login);
-
-
-        // Set up the login form.
-        mEmailView = (EditText)findViewById(R.id.email);
-        //populateAutoComplete();
-
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        mRepeatPasswordView = (EditText) findViewById(R.id.repeatPassword);
-        mRepeatPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        final Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                attemptLogin();
-            }
-        });
-
-        signin = (TextView)findViewById(R.id.sign_textView);
-        signin.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(signin.getText().toString().equals(getResources().getString(R.string.action_sign_in))){
-                    signin.setText(getResources().getString(R.string.action_register));
-                    mEmailSignInButton.setText(getResources().getString(R.string.action_sign_in));
-                    mRepeatPasswordView.setVisibility(View.GONE);
-                    loginMode =true;
-                } else {
-                    signin.setText(getResources().getString(R.string.action_sign_in));
-                    mEmailSignInButton.setText(getResources().getString(R.string.action_register));
-                    mRepeatPasswordView.setVisibility(View.VISIBLE);
-                    loginMode =false;
-                }
-
-            }
-        });
-
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
 
 
     }
