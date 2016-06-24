@@ -127,7 +127,7 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
                 toLaunch.putExtra(AccountActivity.IMAGE_URL,imageUrl);
                 //toLaunch.putExtra(AccountActivity.LASTNAME,userLastName);
                 //toLaunch.putExtra(AccountActivity.PHONE,phone);
-                startActivity(toLaunch);
+                //startActivity(toLaunch);
 
             } else if (id == R.id.menu_password){
                 toLaunch = new Intent(MainActivity.this, PasswordActivity.class);

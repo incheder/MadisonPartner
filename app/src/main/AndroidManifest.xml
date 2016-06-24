@@ -114,7 +114,6 @@
         </activity>
         <activity
             android:name=".account.AccountActivity"
-            android:launchMode="singleTop"
             android:label="@string/title_activity_account"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait">

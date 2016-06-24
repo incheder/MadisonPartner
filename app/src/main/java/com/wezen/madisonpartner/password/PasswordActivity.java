@@ -13,13 +13,14 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.wezen.madisonpartner.R;
+import com.wezen.madisonpartner.utils.DialogActivity;
 
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
 import rx.functions.Action1;
 
-public class PasswordActivity extends AppCompatActivity {
+public class PasswordActivity extends DialogActivity {
 
     @Bind(R.id.oldPassword)
     EditText editTextOldPassword;
