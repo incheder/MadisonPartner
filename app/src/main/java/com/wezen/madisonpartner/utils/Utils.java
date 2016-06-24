@@ -9,10 +9,17 @@ import android.support.v4.content.ContextCompat;
 import com.wezen.madisonpartner.R;
 import com.wezen.madisonpartner.request.HomeServiceRequestStatus;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * Created by eder on 17/11/2015.
  */
 public class Utils {
+
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE dd 'de' MMM 'del 'yyyy 'a las' hh:mm a", Locale.getDefault());
+
     private Utils(){}
 
     public static boolean isAffectedVersion() {
@@ -47,5 +54,11 @@ public class Utils {
         }
         return color;
 
+    }
+
+    public static String setDateFormat(Date date){
+        String newFormat;
+        newFormat = dateFormat.format(date);
+        return newFormat;
     }
 }

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -90,6 +91,8 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     private Button cancel;
     private String clientId;
     private LinearLayout layoutContent;
+    private CardView cardRequestDate;
+    private TextView textViewRequestDate;
 
 
     @Override
@@ -116,6 +119,8 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         statusLabel = (TextView)findViewById(R.id.request_status_label);
         terminateServiceLayout = (LinearLayout)findViewById(R.id.terminate_service_layout);
         layoutContent = (LinearLayout)findViewById(R.id.incoming_request_content);
+        cardRequestDate = (CardView)findViewById(R.id.card_request_date);
+        textViewRequestDate = (TextView)findViewById(R.id.request_date);
 
         map = (MapView)findViewById(R.id.incomming_request_map);
         map.setClickable(false);
@@ -225,6 +230,9 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                 || request.getStatus() == HomeServiceRequestStatus.CANCELADO){
             accept.setVisibility(View.GONE);
             decline.setVisibility(View.GONE);
+            cardRequestDate.setVisibility(View.VISIBLE);
+            textViewRequestDate.setText(Utils.setDateFormat(incomingRequest.getDateForService()));
+
             if(request.getStatus() == HomeServiceRequestStatus.ASIGNADO && checkAfterDateForService(incomingRequest.getDateForService()) ){
                 terminate.setVisibility(View.VISIBLE);
                 cancel.setVisibility(View.GONE);
@@ -236,8 +244,10 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         }else{
             accept.setVisibility(View.VISIBLE);
             decline.setVisibility(View.VISIBLE);
-
+            cardRequestDate.setVisibility(View.GONE);
         }
+
+
 
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -300,6 +310,22 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                poToUpdate.put("status", HomeServiceRequestStatus.CANCELADO.getValue());
+                poToUpdate.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if(e == null){
+                            layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.CANCELADO));
+                            statusLabel.setText(HomeServiceRequestStatus.CANCELADO.toString());
+                            cancel.setVisibility(View.GONE);
+                            pushCancelService();
+                        } else{
+
+                        }
+                    }
+                });
+
+
 
             }
         });
@@ -466,6 +492,30 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         }
 
         ParseCloud.callFunctionInBackground("sendServiceCompletedPush",params,new FunctionCallback<Object>() {
+            @Override
+            public void done(Object o, ParseException e) {
+                if(e == null){
+
+                }else {
+
+                }
+
+            }
+        });
+    }
+
+    private void pushCancelService(){
+        Map<String,Object> params = new HashMap<>();
+        params.put("userId",poToUpdate.getParseUser("user").getObjectId());
+        params.put("requestId",poToUpdate.getObjectId());
+        params.put("homeServiceName", ParseUser.getCurrentUser().getUsername());
+        ParseFile file = ParseUser.getCurrentUser().getParseFile("userImage");
+        if(file != null){
+            params.put("avatarUrl", file.getUrl());
+
+        }
+
+        ParseCloud.callFunctionInBackground("sendCancelServicePushToUser",params,new FunctionCallback<Object>() {
             @Override
             public void done(Object o, ParseException e) {
                 if(e == null){

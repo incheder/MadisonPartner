@@ -88,5 +88,6 @@
     <string name="my_rating">Calificación obtenida</string>
     <string name="drawer_menu_password">Password</string>
     <string name="cancel_service">Cancelar servicio</string>
+    <string name="request_date">Fecha para realizar el servicio</string>
 
 </resources>
