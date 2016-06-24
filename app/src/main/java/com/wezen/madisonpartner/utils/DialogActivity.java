@@ -56,7 +56,8 @@ public class DialogActivity extends AppCompatActivity implements NetworkDialogFr
             if(dialog == null){
                 dialog = NetworkDialogFragment.newInstance("","");
                 dialog.setCancelable(false);
-                dialog.show(getSupportFragmentManager(), null);
+                //dialog.show(getSupportFragmentManager(), null);
+                getSupportFragmentManager().beginTransaction().add(dialog, null).commitAllowingStateLoss();
             }
            // }
 
