@@ -318,7 +318,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                             layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.CANCELADO));
                             statusLabel.setText(HomeServiceRequestStatus.CANCELADO.toString());
                             cancel.setVisibility(View.GONE);
-                            pushCancelService();
+                            pushCancelService(false);
                         } else{
 
                         }
@@ -504,11 +504,13 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         });
     }
 
-    private void pushCancelService(){
+    private void pushCancelService(boolean isRefuse){
         Map<String,Object> params = new HashMap<>();
         params.put("userId",poToUpdate.getParseUser("user").getObjectId());
         params.put("requestId",poToUpdate.getObjectId());
         params.put("homeServiceName", ParseUser.getCurrentUser().getUsername());
+        params.put("isRefuse",isRefuse );
+
         ParseFile file = ParseUser.getCurrentUser().getParseFile("userImage");
         if(file != null){
             params.put("avatarUrl", file.getUrl());

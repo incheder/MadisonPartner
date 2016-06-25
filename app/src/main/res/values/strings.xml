@@ -26,7 +26,7 @@
     <string name="wrong_credentials">Datos incorrectos</string>
     <string name="choose_your_category">Elige la categoría que deseas agregar</string>
     <string name="title_activity_incoming_request">Nueva Solicitud</string>
-    <string name="installation_already_saved">intallation_saved</string>
+    <string translatable="false" name="installation_already_saved">intallation_saved</string>
     <string name="accept_request">Aceptar</string>
     <string name="decline_request">Rechazar</string>
     <string name="title_activity_date_and_time">DateAndTimeActivity</string>
