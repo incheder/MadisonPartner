@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.parse.ParseException;
@@ -42,6 +43,7 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
     private InformationFragment infoFragment;
     private SharedPreferences sharedPref;
     private TextView ratingTextView;
+    private ImageView ratingBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +103,7 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
         ImageView imageAvatar = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.profile_image);
         TextView textViewUsername = (TextView) navigationView.getHeaderView(0).findViewById(R.id.username);
         ratingTextView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.navigationViewRating);
+        ratingBar = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.navigation_drawer_ratingbar_icon);
         ParseUser user = ParseUser.getCurrentUser();
         userName = user.getUsername();
         userEmail = user.getEmail();
@@ -207,6 +210,10 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
 
     @Override
     public void seRating(Double rating) {
-        ratingTextView.setText(String.valueOf(  new DecimalFormat("#.#").format(rating) ));
+        if(rating != null){
+            ratingTextView.setText(String.valueOf(  new DecimalFormat("#.#").format(rating) ));
+            ratingBar.setVisibility(View.VISIBLE);
+
+        }
     }
 }

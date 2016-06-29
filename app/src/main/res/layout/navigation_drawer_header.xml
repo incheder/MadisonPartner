@@ -3,9 +3,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="190dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/primary"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <de.hdodenhof.circleimageview.CircleImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -23,11 +23,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textColor="#FFF"
         android:textStyle="normal"
         android:gravity="center"
-        android:paddingBottom="4dp"
+
         android:id="@+id/username"
         android:layout_above="@+id/navigationViewRating"
         android:layout_alignLeft="@+id/profile_image"
@@ -37,15 +37,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/navigationViewRating"
-        android:gravity="center"
+        android:gravity="center_horizontal"
         android:layout_marginBottom="8dp"
-        android:textSize="20sp"
+        android:textSize="16sp"
         android:textColor="#fff"
         android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/username"
         android:layout_alignStart="@+id/username"
         />
 
+    <!--
     <RatingBar
         android:id="@+id/navigation_drawer_ratingbar_icon"
         style="@android:style/Widget.DeviceDefault.RatingBar.Indicator"
@@ -53,10 +54,26 @@
         android:layout_height="wrap_content"
         android:numStars="1"
         android:rating="1"
-        android:layout_toRightOf="@id/navigationViewRating"
-        android:layout_toEndOf="@id/navigationViewRating"
+        android:layout_twoRightOf="@+id/navigationViewRating"
+        android:layout_toEndOf="@+id/navigationViewRating"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="8dp"
+        android:visibility="gone"
         />
+        -->
+
+    <ImageView
+        android:id="@+id/navigation_drawer_ratingbar_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_grade_24dp"
+
+        android:layout_toRightOf="@+id/navigationViewRating"
+        android:layout_toEndOf="@+id/navigationViewRating"
+        android:layout_alignBottom="@+id/navigationViewRating"
+
+        android:layout_marginLeft="@dimen/short_elements_margin"
+        android:layout_marginStart="@dimen/short_elements_margin"
+       />
 
 </RelativeLayout>
