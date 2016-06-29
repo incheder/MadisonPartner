@@ -53,4 +53,5 @@
     <color name="order_sent_text">#FFFFFF</color>
     <color name="button_text_color">#fff</color>
     <color name="status_label_color">#ffffff</color>
+    <color name="white">#fff</color>
 </resources>

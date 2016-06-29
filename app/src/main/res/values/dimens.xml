@@ -24,6 +24,7 @@
     <dimen name="elevation_fab_map">12dp</dimen>
 
     <dimen name="short_elements_margin">5dp</dimen>
+    <dimen name="cancel_button_padding">3dp</dimen>
 
 
 </resources>

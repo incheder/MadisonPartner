@@ -212,9 +212,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/terminate_service"
-                                android:layout_marginRight="@dimen/elements_margin_request_item"
-                                android:layout_marginEnd="@dimen/elements_margin_request_item"
-                                android:textAppearance="?android:attr/textAppearanceLarge"
                                 android:theme="@style/AppTheme.AcceptRequestButton"
                                 android:textColor="@color/button_text_color"
                                 android:visibility="gone"
@@ -222,13 +219,12 @@
 
                             <Button
                                 android:id="@+id/cancel_service_button"
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="@string/cancel_service"
-                                android:layout_marginRight="@dimen/elements_margin_request_item"
-                                android:layout_marginEnd="@dimen/elements_margin_request_item"
-                                android:textAppearance="?android:attr/textAppearanceLarge"
                                 android:visibility="gone"
+                                android:background="@color/white"
+
                                 />
 
                         </LinearLayout>

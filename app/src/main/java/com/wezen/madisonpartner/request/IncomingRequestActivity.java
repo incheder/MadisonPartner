@@ -239,6 +239,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             } else if(request.getStatus() == HomeServiceRequestStatus.ASIGNADO){
                 terminate.setVisibility(View.GONE);
                 cancel.setVisibility(View.VISIBLE);
+                cancel.setTextColor(Utils.getColorByStatus(this,HomeServiceRequestStatus.valueOf(request.getStatus().getValue())));
             }
 
         }else{
@@ -290,14 +291,18 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             public void onClick(View v) {
                 //pushServiceComplete();
                 poToUpdate.put("status", HomeServiceRequestStatus.COMPLETO.getValue());
-                poToUpdate.saveInBackground(new SaveCallback() {
+                layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.COMPLETO));
+                statusLabel.setText(HomeServiceRequestStatus.COMPLETO.toString());
+                terminate.setVisibility(View.GONE);
+                pushServiceComplete();
+                poToUpdate.saveEventually(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
                         if(e == null){
-                            layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.COMPLETO));
+                            /*layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.COMPLETO));
                             statusLabel.setText(HomeServiceRequestStatus.COMPLETO.toString());
                             terminate.setVisibility(View.GONE);
-                            pushServiceComplete();
+                            pushServiceComplete();*/
                         } else{
 
                         }
@@ -311,14 +316,18 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             @Override
             public void onClick(View v) {
                 poToUpdate.put("status", HomeServiceRequestStatus.CANCELADO.getValue());
-                poToUpdate.saveInBackground(new SaveCallback() {
+                layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.CANCELADO));
+                statusLabel.setText(HomeServiceRequestStatus.CANCELADO.toString());
+                cancel.setVisibility(View.GONE);
+                pushCancelService(false);
+                poToUpdate.saveEventually(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
                         if(e == null){
-                            layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.CANCELADO));
+                            /*layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.CANCELADO));
                             statusLabel.setText(HomeServiceRequestStatus.CANCELADO.toString());
                             cancel.setVisibility(View.GONE);
-                            pushCancelService(false);
+                            pushCancelService(false);*/
                         } else{
 
                         }
@@ -464,13 +473,15 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         }
     }
 
-    private void updateHomeServiceRequestStatus(HomeServiceRequestStatus status){
+    private void updateHomeServiceRequestStatus(final HomeServiceRequestStatus status){
         poToUpdate.put("status",status.getValue());
         poToUpdate.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if(e==null){
-                    finish();
+                    if(status == HomeServiceRequestStatus.RECHAZADO)
+                        pushCancelService(true);
+                        //finish();
                 } else {
                     //ups
                     Toast.makeText(IncomingRequestActivity.this, R.string.we_could_not_comunicate_with_our_mothership, Toast.LENGTH_SHORT).show();
@@ -504,7 +515,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         });
     }
 
-    private void pushCancelService(boolean isRefuse){
+    private void pushCancelService(final boolean isRefuse){
         Map<String,Object> params = new HashMap<>();
         params.put("userId",poToUpdate.getParseUser("user").getObjectId());
         params.put("requestId",poToUpdate.getObjectId());
@@ -521,6 +532,9 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             @Override
             public void done(Object o, ParseException e) {
                 if(e == null){
+                    if(isRefuse){
+                        finish();
+                    }
 
                 }else {
 
