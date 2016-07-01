@@ -89,5 +89,11 @@
     <string name="drawer_menu_password">Password</string>
     <string name="cancel_service">Cancelar servicio</string>
     <string name="request_date">Fecha para realizar el servicio</string>
+    <string name="account_data_saved">Datos guardados</string>
+    <string name="account_data_error">Hubo un problema al enviar la informacion</string>
+    <string name="invalid_current_password">Password actual incorrecto</string>
+    <string name="password_updated">Password guardado</string>
+    <string name="error_while_updating_password">Hubo un problema al guardar el password, intentalo de nuevo</string>
+    <string name="error_while_login">Hubo un problema cierra la sesión y logueate con el nuevo pasword</string>
 
 </resources>

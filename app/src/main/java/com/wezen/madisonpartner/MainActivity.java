@@ -44,6 +44,8 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
     private SharedPreferences sharedPref;
     private TextView ratingTextView;
     private ImageView ratingBar;
+    private String userLastname;
+    private String phone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,11 +85,16 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
 
         //calling sync state is necessay or else your hamburger icon wont show up
         actionBarDrawerToggle.syncState();
-        fillNavigationViewHeader();
+
         saveInstallationData();
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fillNavigationViewHeader();
+    }
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -107,6 +114,8 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
         ParseUser user = ParseUser.getCurrentUser();
         userName = user.getUsername();
         userEmail = user.getEmail();
+        userLastname = user.getString("lastName");
+        phone = user.getString("phone");
         textViewUsername.setText(userName);
         //ratingTextView.setText(userEmail);
         if(user.getParseFile("userImage")!= null){
@@ -128,8 +137,8 @@ public class MainActivity extends DialogActivity implements SelectImageDialogFra
                 toLaunch.putExtra(AccountActivity.USERNAME,userName);
                 toLaunch.putExtra(AccountActivity.EMAIL,userEmail);
                 toLaunch.putExtra(AccountActivity.IMAGE_URL,imageUrl);
-                //toLaunch.putExtra(AccountActivity.LASTNAME,userLastName);
-                //toLaunch.putExtra(AccountActivity.PHONE,phone);
+                toLaunch.putExtra(AccountActivity.LASTNAME,userLastname);
+                toLaunch.putExtra(AccountActivity.PHONE,phone);
                 //startActivity(toLaunch);
 
             } else if (id == R.id.menu_password){

@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.jakewharton.rxbinding.view.RxView;
 import com.parse.LogInCallback;
@@ -96,24 +97,55 @@ public class PasswordActivity extends DialogActivity {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
                 if (e == null) {
+                    changePassword(parseUser);
                     //old password is correct
-                    parseUser.setPassword(editTextNewPassword.getText().toString());
+                    /*parseUser.setPassword(editTextNewPassword.getText().toString());
                     parseUser.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e1) {
                             if (e1 == null) {
                                 ParseUser.getCurrentUser().fetchInBackground();
+                                Toast.makeText(PasswordActivity.this,R.string.password_updated,Toast.LENGTH_SHORT).show();
+                                finish();
                             } else {//ups
-
+                                Toast.makeText(PasswordActivity.this, R.string.error_while_updating_password, Toast.LENGTH_LONG).show();
                             }
 
                         }
+                    });*/
+                } else {//ups
+                    if(e.getCode() == 101){
+                        Toast.makeText(PasswordActivity.this,R.string.invalid_current_password,Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+    }
+
+    private void changePassword(ParseUser parseUser){
+        parseUser.setPassword(editTextNewPassword.getText().toString());
+        parseUser.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e1) {
+                if (e1 == null) {
+                    //ParseUser.getCurrentUser().fetchInBackground();
+                    ParseUser.logInInBackground(ParseUser.getCurrentUser().getUsername(), editTextNewPassword.getText().toString(), new LogInCallback() {
+                        @Override
+                        public void done(ParseUser parseUser, ParseException e) {
+                            if(e==null){
+                                Toast.makeText(PasswordActivity.this,R.string.password_updated,Toast.LENGTH_SHORT).show();
+                                ParseUser.getCurrentUser().fetchInBackground();
+                                //finish();
+                            } else {
+                                Toast.makeText(PasswordActivity.this,R.string.error_while_login,Toast.LENGTH_LONG).show();
+                            }
+                        }
                     });
 
-
                 } else {//ups
-
+                    Toast.makeText(PasswordActivity.this, R.string.error_while_updating_password, Toast.LENGTH_LONG).show();
                 }
+
             }
         });
     }

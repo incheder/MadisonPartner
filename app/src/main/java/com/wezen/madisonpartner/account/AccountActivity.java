@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -155,8 +156,10 @@ public class AccountActivity extends DialogActivity {
             @Override
             public void done(ParseException e) {
                 if(e == null){
-                        ParseUser.getCurrentUser().fetchInBackground();
+                    ParseUser.getCurrentUser().fetchInBackground();
+                    Toast.makeText(AccountActivity.this, R.string.account_data_saved, Toast.LENGTH_SHORT).show();
                 } else { //ups
+                    Toast.makeText(AccountActivity.this, R.string.account_data_error, Toast.LENGTH_SHORT).show();
 
                 }
             }
