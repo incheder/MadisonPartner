@@ -1,24 +1,51 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.wezen.madisonpartner.request.RequestListFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.wezen.madisonpartner.request.RequestListFragment"
+    android:id="@+id/swipeRefreshLayoutRequestList">
 
-
-    <com.wezen.madisonpartner.utils.AutofitRecyclerView
-        android:id="@+id/recyclerViewRequestList"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        android:columnWidth="@dimen/column_width"/>
+        >
 
-    <ProgressBar
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/progressBarRequestList"
-        android:layout_gravity="center"
-        />
+        <LinearLayout
+            android:id="@+id/emptyRequestList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="@dimen/empty_list_image_width"
+                android:layout_height="@dimen/empty_list_image_height"
+                app:srcCompat="@drawable/ic_mood_bad_black_24dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/empty_requests"
+                android:textColor="@color/accent"/>
+
+        </LinearLayout>
+
+        <com.wezen.madisonpartner.utils.AutofitRecyclerView
+            android:id="@+id/recyclerViewRequestList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:columnWidth="@dimen/column_width"/>
+
+    </FrameLayout>
 
 
-</FrameLayout>
+
+
+
+</android.support.v4.widget.SwipeRefreshLayout>

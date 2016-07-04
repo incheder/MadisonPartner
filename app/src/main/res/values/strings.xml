@@ -95,5 +95,6 @@
     <string name="password_updated">Password guardado</string>
     <string name="error_while_updating_password">Hubo un problema al guardar el password, intentalo de nuevo</string>
     <string name="error_while_login">Hubo un problema cierra la sesión y logueate con el nuevo pasword</string>
+    <string name="empty_requests">No hay peticiones</string>
 
 </resources>

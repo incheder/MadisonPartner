@@ -38,6 +38,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 app:border_color="#FF000000"
+                android:src="@drawable/ic_face_black_48dp"
                 android:layout_gravity="center_vertical"/>
 
             <LinearLayout

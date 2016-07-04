@@ -25,6 +25,10 @@
 
     <dimen name="short_elements_margin">5dp</dimen>
     <dimen name="cancel_button_padding">3dp</dimen>
+    <dimen name="empty_list_image_width">100dp</dimen>
+    <dimen name="empty_list_image_height">100dp</dimen>
+    <dimen name="sending_notification_image_width">100dp</dimen>
+    <dimen name="sending_notification_image_height">100dp</dimen>
 
 
 </resources>

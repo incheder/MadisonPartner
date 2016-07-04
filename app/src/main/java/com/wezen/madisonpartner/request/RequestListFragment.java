@@ -3,12 +3,15 @@ package com.wezen.madisonpartner.request;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -33,6 +36,7 @@ public class RequestListFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = RequestListFragment.class.getSimpleName();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -40,7 +44,10 @@ public class RequestListFragment extends Fragment {
 
     private List<HomeServiceRequest> requestList;
     private RequestAdapter adapter;
-    private ProgressBar progressBar;
+    //private ProgressBar progressBar;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private HomeServiceRequestStatus homeServiceRequestStatus;
+    private LinearLayout emptyRequest;
 
     /**
      * Use this factory method to create a new instance of
@@ -80,11 +87,15 @@ public class RequestListFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_request_list, container, false);
         AutofitRecyclerView recyclerViewRequestList = (AutofitRecyclerView)view.findViewById(R.id.recyclerViewRequestList);
-        progressBar = (ProgressBar)view.findViewById(R.id.progressBarRequestList);
+        swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipeRefreshLayoutRequestList);
+        emptyRequest = (LinearLayout)view.findViewById(R.id.emptyRequestList);
+        //progressBar = (ProgressBar)view.findViewById(R.id.progressBarRequestList);
         recyclerViewRequestList.setHasFixedSize(true);
         requestList = new ArrayList<>();
         adapter = new RequestAdapter(requestList,getActivity());
         recyclerViewRequestList.setAdapter(adapter);
+        swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
+
 
 
         return view;
@@ -93,10 +104,18 @@ public class RequestListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getList(null);
+        getList(homeServiceRequestStatus);
     }
 
     private void getList(HomeServiceRequestStatus status) {
+
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayout.setRefreshing(true);
+            }
+        });
+
         ParseQuery<ParseObject> queryRequest = ParseQuery.getQuery("HomeServiceRequest");
         if(ParseUser.getCurrentUser().getInt("userType") == 2){
             ParseQuery<ParseObject> queryServices = ParseQuery.getQuery("HomeServices");
@@ -118,23 +137,30 @@ public class RequestListFragment extends Fragment {
         queryRequest.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
-                progressBar.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.GONE);
+                swipeRefreshLayout.setRefreshing(false);
                 if (e == null) {
                     requestList.clear();
-                    for (ParseObject po : list) {
-                        HomeServiceRequest request = new HomeServiceRequest();
-                        request.setId(po.getObjectId());
-                        request.setLocation(new LatLng(po.getParseGeoPoint("userLocation").getLatitude(), po.getParseGeoPoint("userLocation").getLongitude()));
-                        request.setName(po.getParseObject("user").getString("username"));
-                        request.setDescription(po.getString("problemDescription"));
-                        int status = po.getInt("status");
-                        request.setStatus(HomeServiceRequestStatus.valueOf(status));
-                        request.setHomeServiceID((po.getParseObject("homeService").getObjectId()));
-                        request.setDate(po.getCreatedAt().toString());
-                        request.setUserAvatar(po.getParseObject("user").getParseFile("userImage").getUrl());
-                        request.setAddress(po.getString("address"));
-                        request.setPhone(po.getString("phone"));
-                        requestList.add(request);
+                    if(list.size() > 0){
+                        emptyRequest.setVisibility(View.GONE);
+                        for (ParseObject po : list) {
+                            HomeServiceRequest request = new HomeServiceRequest();
+                            request.setId(po.getObjectId());
+                            request.setLocation(new LatLng(po.getParseGeoPoint("userLocation").getLatitude(), po.getParseGeoPoint("userLocation").getLongitude()));
+                            request.setName(po.getParseObject("user").getString("username"));
+                            request.setDescription(po.getString("problemDescription"));
+                            int status = po.getInt("status");
+                            request.setStatus(HomeServiceRequestStatus.valueOf(status));
+                            request.setHomeServiceID((po.getParseObject("homeService").getObjectId()));
+                            request.setDate(po.getCreatedAt().toString());
+                            request.setUserAvatar(po.getParseObject("user").getParseFile("userImage").getUrl());
+                            request.setAddress(po.getString("address"));
+                            request.setPhone(po.getString("phone"));
+                            requestList.add(request);
+                        }
+
+                    } else {
+                        emptyRequest.setVisibility(View.VISIBLE);
                     }
 
                     adapter.notifyDataSetChanged();
@@ -168,23 +194,35 @@ public class RequestListFragment extends Fragment {
         int id = item.getItemId();
         switch (id){
             case R.id.all:
+                homeServiceRequestStatus = null;
                 getList(null);
                 break;
             case R.id.send:
+                homeServiceRequestStatus = HomeServiceRequestStatus.RECIBIDO;
                 getList(HomeServiceRequestStatus.RECIBIDO);
                 break;
             case R.id.asigned:
+                homeServiceRequestStatus = HomeServiceRequestStatus.ASIGNADO;
                 getList(HomeServiceRequestStatus.ASIGNADO);
                 break;
             case R.id.done:
+                homeServiceRequestStatus = HomeServiceRequestStatus.COMPLETO;
                 getList(HomeServiceRequestStatus.COMPLETO);
                 break;
             case R.id.canceled:
+                homeServiceRequestStatus = HomeServiceRequestStatus.CANCELADO;
                 getList(HomeServiceRequestStatus.CANCELADO);
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    SwipeRefreshLayout.OnRefreshListener onRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            Log.d(TAG,"refresh listener");
+            getList(homeServiceRequestStatus);
+        }
+    };
 
 }
