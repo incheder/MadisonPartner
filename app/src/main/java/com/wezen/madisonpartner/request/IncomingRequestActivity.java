@@ -42,6 +42,7 @@ import com.wezen.madisonpartner.R;
 import com.wezen.madisonpartner.employees.Employee;
 import com.wezen.madisonpartner.employees.EmployeeListActivity;
 import com.wezen.madisonpartner.notification.SendingNotificationActivity;
+import com.wezen.madisonpartner.request.dialogs.ConfirmDialogFragment;
 import com.wezen.madisonpartner.request.dialogs.DateDialogFragment;
 import com.wezen.madisonpartner.request.dialogs.IncomingRequestDialogFragment;
 import com.wezen.madisonpartner.request.dialogs.TimeDialogFragment;
@@ -61,7 +62,9 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class IncomingRequestActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
-        TimePickerDialog.OnTimeSetListener, IncomingRequestDialogFragment.OnClickIncomingRequestDialog,DialogInterface.OnClickListener{
+        TimePickerDialog.OnTimeSetListener, IncomingRequestDialogFragment.OnClickIncomingRequestDialog,
+        DialogInterface.OnClickListener,ConfirmDialogFragment.OnClickConfirmDialog{
+
     public static final String REQUEST_ID = "request_id";
     public static final int REQUEST_CODE = 1;
     private MapView map;
@@ -236,6 +239,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             if(request.getStatus() == HomeServiceRequestStatus.ASIGNADO && checkAfterDateForService(incomingRequest.getDateForService()) ){
                 terminate.setVisibility(View.VISIBLE);
                 cancel.setVisibility(View.GONE);
+                terminate.setTextColor(Utils.getColorByStatus(this,HomeServiceRequestStatus.valueOf(request.getStatus().getValue())));
             } else if(request.getStatus() == HomeServiceRequestStatus.ASIGNADO){
                 terminate.setVisibility(View.GONE);
                 cancel.setVisibility(View.VISIBLE);
@@ -289,53 +293,18 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         terminate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //pushServiceComplete();
-                poToUpdate.put("status", HomeServiceRequestStatus.COMPLETO.getValue());
-                layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.COMPLETO));
-                statusLabel.setText(HomeServiceRequestStatus.COMPLETO.toString());
-                terminate.setVisibility(View.GONE);
-                pushServiceComplete();
-                poToUpdate.saveEventually(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if(e == null){
-                            /*layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.COMPLETO));
-                            statusLabel.setText(HomeServiceRequestStatus.COMPLETO.toString());
-                            terminate.setVisibility(View.GONE);
-                            pushServiceComplete();*/
-                        } else{
-
-                        }
-                    }
-                });
-
+                ConfirmDialogFragment confirmDialogFragment = ConfirmDialogFragment.newInstance(false);
+                confirmDialogFragment.setCancelable(false);
+                confirmDialogFragment.show(getSupportFragmentManager(), null);
             }
         });
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                poToUpdate.put("status", HomeServiceRequestStatus.CANCELADO.getValue());
-                layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.CANCELADO));
-                statusLabel.setText(HomeServiceRequestStatus.CANCELADO.toString());
-                cancel.setVisibility(View.GONE);
-                pushCancelService(false);
-                poToUpdate.saveEventually(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if(e == null){
-                            /*layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.CANCELADO));
-                            statusLabel.setText(HomeServiceRequestStatus.CANCELADO.toString());
-                            cancel.setVisibility(View.GONE);
-                            pushCancelService(false);*/
-                        } else{
-
-                        }
-                    }
-                });
-
-
-
+                ConfirmDialogFragment confirmDialogFragment = ConfirmDialogFragment.newInstance(true);
+                confirmDialogFragment.setCancelable(false);
+                confirmDialogFragment.show(getSupportFragmentManager(), null);
             }
         });
 
@@ -545,5 +514,42 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
     }
 
 
+    @Override
+    public void onConfirmPositiveButtonClicked(boolean isCancel) {
+        if(isCancel){
+            poToUpdate.put("status", HomeServiceRequestStatus.CANCELADO.getValue());
+            layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.CANCELADO));
+            statusLabel.setText(HomeServiceRequestStatus.CANCELADO.toString());
+            cancel.setVisibility(View.GONE);
+            pushCancelService(false);
+            poToUpdate.saveEventually(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if(e == null){
 
+                    } else{
+
+                    }
+                }
+            });
+        } else {
+            poToUpdate.put("status", HomeServiceRequestStatus.COMPLETO.getValue());
+            layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.COMPLETO));
+            statusLabel.setText(HomeServiceRequestStatus.COMPLETO.toString());
+            terminate.setVisibility(View.GONE);
+            pushServiceComplete();
+            poToUpdate.saveEventually(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if(e == null){
+
+                    } else{
+
+                    }
+                }
+            });
+        }
+
+
+    }
 }

@@ -2,6 +2,7 @@ package com.wezen.madisonpartner.notification;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.parse.SaveCallback;
 import com.wezen.madisonpartner.MainActivity;
 import com.wezen.madisonpartner.R;
 import com.wezen.madisonpartner.request.HomeServiceRequestStatus;
+import com.wezen.madisonpartner.utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -65,7 +67,10 @@ public class SendingNotificationActivity extends AppCompatActivity {
         progressBar = (ProgressBar)findViewById(R.id.progressBarNotification);
         orderSent = (LinearLayout)findViewById(R.id.orderSentLayout);
         Button btnBack = (Button)findViewById(R.id.notificationGoBack);
-        btnBack.setOnClickListener(goBackClickListener);
+        if (btnBack != null) {
+            btnBack.setTextColor(ContextCompat.getColor(this,R.color.primary));
+            btnBack.setOnClickListener(goBackClickListener);
+        }
         if(getIntent().getExtras()!= null){
             userId =  getIntent().getStringExtra(USER_ID);
             date =  getIntent().getStringExtra(DATE);

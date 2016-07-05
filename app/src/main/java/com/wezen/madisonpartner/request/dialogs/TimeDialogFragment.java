@@ -94,7 +94,7 @@ public class TimeDialogFragment extends DialogFragment{
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             //TimePicker dp = picker.findViewById(android.internal.R);
-                            mListener.onTimeSet(null, hour,minute);
+                            //mListener.onTimeSet(null, hour,minute);
 
                         }
                     });

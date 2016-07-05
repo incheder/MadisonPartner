@@ -96,5 +96,8 @@
     <string name="error_while_updating_password">Hubo un problema al guardar el password, intentalo de nuevo</string>
     <string name="error_while_login">Hubo un problema cierra la sesión y logueate con el nuevo pasword</string>
     <string name="empty_requests">No hay peticiones</string>
+    <string name="confirm_end_service_message">¿Deseas finalizar el servicio?</string>
+    <string name="confirm_cancel_service_message">¿Deseas cancelar el servicio?</string>
+    <string name="confirm_title">Confirmar</string>
 
 </resources>
