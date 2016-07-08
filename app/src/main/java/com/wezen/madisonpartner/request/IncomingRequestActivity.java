@@ -470,7 +470,6 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             params.put("avatarUrl", file.getUrl());
 
         }
-
         ParseCloud.callFunctionInBackground("sendServiceCompletedPush",params,new FunctionCallback<Object>() {
             @Override
             public void done(Object o, ParseException e) {
@@ -515,41 +514,69 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
 
 
     @Override
-    public void onConfirmPositiveButtonClicked(boolean isCancel) {
-        if(isCancel){
-            poToUpdate.put("status", HomeServiceRequestStatus.CANCELADO.getValue());
-            layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.CANCELADO));
-            statusLabel.setText(HomeServiceRequestStatus.CANCELADO.toString());
-            cancel.setVisibility(View.GONE);
-            pushCancelService(false);
-            poToUpdate.saveEventually(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if(e == null){
-
-                    } else{
-
-                    }
-                }
-            });
-        } else {
-            poToUpdate.put("status", HomeServiceRequestStatus.COMPLETO.getValue());
-            layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.COMPLETO));
-            statusLabel.setText(HomeServiceRequestStatus.COMPLETO.toString());
-            terminate.setVisibility(View.GONE);
-            pushServiceComplete();
-            poToUpdate.saveEventually(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if(e == null){
-
-                    } else{
+    public void onConfirmPositiveButtonClicked(final boolean isCancel) {
+        poToUpdate.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject parseObject, ParseException e) {
+                if(e == null){
+                    if(isCancel && parseObject.getInt("status") != HomeServiceRequestStatus.COMPLETO.getValue()){
+                            poToUpdate.put("status", HomeServiceRequestStatus.CANCELADO.getValue());
+                            showCancelLayout();
+                            poToUpdate.saveEventually(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if(e == null){
+                                        pushCancelService(false);
+                                    } else{
+                                        //TODO add error message
+                                    }
+                                }
+                            });
 
                     }
+                    else if(parseObject.getInt("status") != HomeServiceRequestStatus.CANCELADO.getValue()){
+                        poToUpdate.put("status", HomeServiceRequestStatus.COMPLETO.getValue());
+                        showCancelLayout();
+                        poToUpdate.saveEventually(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if(e == null){
+                                    pushServiceComplete();
+                                } else{
+                                    //TODO add error message
+                                }
+                            }
+                        });
+                    } else{
+                        String errorMessage = getResources().getString(R.string.can_not_terminate_service);
+                        if(isCancel){
+                            errorMessage = getResources().getString(R.string.can_not_cancel_service);
+                        }
+                        if(parseObject.getInt("status") == HomeServiceRequestStatus.CANCELADO.getValue() ){
+                            showCancelLayout();
+                        } else if(parseObject.getInt("status") == HomeServiceRequestStatus.COMPLETO.getValue()){
+                            showCompleteLayout();
+                        }
+                        Toast.makeText(IncomingRequestActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+                    //TODO add message error
                 }
-            });
-        }
+            }
+        });
 
+    }
 
+    private void showCancelLayout(){
+        layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.CANCELADO));
+        statusLabel.setText(HomeServiceRequestStatus.CANCELADO.toString());
+        cancel.setVisibility(View.GONE);
+    }
+
+    private void showCompleteLayout(){
+        layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.COMPLETO));
+        statusLabel.setText(HomeServiceRequestStatus.COMPLETO.toString());
+        terminate.setVisibility(View.GONE);
     }
 }

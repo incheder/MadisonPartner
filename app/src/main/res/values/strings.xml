@@ -99,5 +99,7 @@
     <string name="confirm_end_service_message">¿Deseas finalizar el servicio?</string>
     <string name="confirm_cancel_service_message">¿Deseas cancelar el servicio?</string>
     <string name="confirm_title">Confirmar</string>
+    <string name="can_not_terminate_service">El servicio ya se habia cancelado</string>
+    <string name="can_not_cancel_service">El servicio ya ha finalizado</string>
 
 </resources>
