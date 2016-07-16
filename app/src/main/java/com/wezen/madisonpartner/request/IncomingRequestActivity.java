@@ -162,6 +162,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         ParseQuery<ParseObject> query = ParseQuery.getQuery("HomeServiceRequest");
         query.include("user");
         query.include("homeService.employees");
+        query.include("review");
         query.getInBackground(id, new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject po, ParseException e) {
@@ -187,8 +188,14 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                     incomingRequest.setUserID(po.getParseObject("user").getObjectId());
                     incomingRequest.setProviderName(po.getParseObject("homeService").getString("name"));
                     incomingRequest.setPhone(po.getString("phone"));
-                    incomingRequest.setReview(po.getInt("rating"));
                     incomingRequest.setDateForService(po.getDate("dateForService"));
+
+                    if(po.getParseObject("review") != null ){
+                        incomingRequest.setReview(po.getParseObject("review").getInt("numStars"));
+                        incomingRequest.setReviewText(po.getParseObject("review").getString("comment"));
+                    }
+                    //incomingRequest.setReview(po.getInt("rating"));
+
                     setData(incomingRequest);
 
                     ParseFile image = po.getParseObject("homeService").getParseFile("image");
@@ -213,8 +220,9 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         TextView userAddress = (TextView)findViewById(R.id.incoming_request_address);
         TextView description = (TextView)findViewById(R.id.incoming_request_item_description);
         TextView phone = (TextView)findViewById(R.id.incoming_request_phone);
-        LinearLayout layoutRating = (LinearLayout)findViewById(R.id.incoming_request_layout_rating);
+        CardView layoutRating = (CardView)findViewById(R.id.incoming_request_layout_rating);
         RatingBar ratingBar = (RatingBar)findViewById(R.id.incoming_request_ratingBar);
+        TextView textViewReview = (TextView)findViewById(R.id.incoming_request_review_textView);
 
 
         //accept.setVisibility(View.VISIBLE);
@@ -234,7 +242,11 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
             accept.setVisibility(View.GONE);
             decline.setVisibility(View.GONE);
             cardRequestDate.setVisibility(View.VISIBLE);
-            textViewRequestDate.setText(Utils.setDateFormat(incomingRequest.getDateForService()));
+            if(incomingRequest.getDateForService() != null){
+                textViewRequestDate.setText(Utils.setDateFormat(incomingRequest.getDateForService()));
+            } else {
+                cardRequestDate.setVisibility(View.GONE);
+            }
 
             if(request.getStatus() == HomeServiceRequestStatus.ASIGNADO && checkAfterDateForService(incomingRequest.getDateForService()) ){
                 terminate.setVisibility(View.VISIBLE);
@@ -314,7 +326,13 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         if(request.getStatus() == HomeServiceRequestStatus.COMPLETO && request.getReview() > 0){
             layoutRating.setVisibility(View.VISIBLE);
             ratingBar.setRating(request.getReview());
-            //TODO add the client's comment
+            if(request.getReviewText() != null && !request.getReviewText().equals("")){
+                textViewReview.setText(request.getReviewText());
+                textViewReview.setVisibility(View.VISIBLE);
+            } else {
+                textViewReview.setVisibility(View.GONE);
+            }
+
         } else {
             layoutRating.setVisibility(View.GONE);
         }
@@ -515,7 +533,13 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
 
     @Override
     public void onConfirmPositiveButtonClicked(final boolean isCancel) {
-        poToUpdate.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+        if(isCancel){
+            showCancelLayout();
+        } else {
+            showCompleteLayout();
+        }
+
+        poToUpdate.fetchInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
                 if(e == null){
@@ -536,7 +560,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                     }
                     else if(parseObject.getInt("status") != HomeServiceRequestStatus.CANCELADO.getValue()){
                         poToUpdate.put("status", HomeServiceRequestStatus.COMPLETO.getValue());
-                        showCancelLayout();
+                        showCompleteLayout();
                         poToUpdate.saveEventually(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
@@ -557,7 +581,7 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
                         } else if(parseObject.getInt("status") == HomeServiceRequestStatus.COMPLETO.getValue()){
                             showCompleteLayout();
                         }
-                        Toast.makeText(IncomingRequestActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(IncomingRequestActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                     }
 
                 } else {
@@ -572,11 +596,13 @@ public class IncomingRequestActivity extends AppCompatActivity implements DatePi
         layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.CANCELADO));
         statusLabel.setText(HomeServiceRequestStatus.CANCELADO.toString());
         cancel.setVisibility(View.GONE);
+        terminate.setVisibility(View.GONE);
     }
 
     private void showCompleteLayout(){
         layoutStatus.setBackgroundColor(Utils.getColorByStatus(IncomingRequestActivity.this,HomeServiceRequestStatus.COMPLETO));
         statusLabel.setText(HomeServiceRequestStatus.COMPLETO.toString());
         terminate.setVisibility(View.GONE);
+        cancel.setVisibility(View.GONE);
     }
 }

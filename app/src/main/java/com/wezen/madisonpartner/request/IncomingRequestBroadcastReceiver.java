@@ -13,6 +13,8 @@ import org.json.JSONObject;
  */
 public class IncomingRequestBroadcastReceiver extends com.parse.ParsePushBroadcastReceiver {
 
+    private static final String TAG = IncomingRequestBroadcastReceiver.class.getSimpleName();
+
     private static final String PARSE_INCOMING_REQUEST = "homeServiceRequest";
 
     @Override
@@ -34,7 +36,7 @@ public class IncomingRequestBroadcastReceiver extends com.parse.ParsePushBroadca
         try {
             String PARSE_DATA_KEY = "com.parse.Data";
             data = new JSONObject(intent.getExtras().getString(PARSE_DATA_KEY));
-            Log.d("TAG","data: " + data);
+            Log.d(TAG,"data: " + data);
         } catch (JSONException e) {
             // Json was not readable...
             Log.e("ERROR",e.getMessage());

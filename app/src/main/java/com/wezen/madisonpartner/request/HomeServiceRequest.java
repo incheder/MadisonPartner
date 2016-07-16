@@ -23,6 +23,7 @@ public class HomeServiceRequest {
     private String providerName;
     private String phone;
     private Date dateForService;
+    private String reviewText;
 
 
     public String getUserAvatar() {
@@ -135,5 +136,13 @@ public class HomeServiceRequest {
 
     public void setDateForService(Date dateForService) {
         this.dateForService = dateForService;
+    }
+
+    public String getReviewText() {
+        return reviewText;
+    }
+
+    public void setReviewText(String reviewText) {
+        this.reviewText = reviewText;
     }
 }

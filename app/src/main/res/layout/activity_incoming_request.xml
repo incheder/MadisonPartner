@@ -135,7 +135,7 @@
                             android:paddingRight="@dimen/card_item_padding"
                             android:maxLines="2"/>
 
-
+                        <!--
                         <LinearLayout
                             android:id="@+id/incoming_request_layout_rating"
                             android:layout_width="match_parent"
@@ -165,7 +165,7 @@
 
 
                         </LinearLayout>
-
+                        -->
 
 
                         <LinearLayout
@@ -229,6 +229,68 @@
 
                         </LinearLayout>
 
+
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/incoming_request_layout_rating"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/card_item_margin"
+                    android:layout_marginRight="@dimen/card_item_margin"
+                    android:layout_marginEnd="@dimen/card_item_margin"
+                    android:layout_marginLeft="@dimen/card_item_margin"
+                    android:layout_marginStart="@dimen/card_item_margin"
+                    card_view:cardCornerRadius="4dp"
+                    android:visibility="gone">
+
+                    <LinearLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/incoming_request_rating_textView"
+                            android:text="@string/my_rating"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:layout_gravity="left"
+                            android:layout_marginTop="@dimen/elements_margin"
+                            android:layout_marginLeft="@dimen/elements_margin"
+                            android:layout_marginStart="@dimen/elements_margin"
+                            />
+
+                        <RatingBar
+                            android:id="@+id/incoming_request_ratingBar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@android:style/Widget.DeviceDefault.RatingBar.Indicator"
+                            android:numStars="5"
+                            android:layout_gravity="left"
+                            android:layout_marginBottom="@dimen/elements_margin"
+                            android:layout_marginLeft="@dimen/elements_margin"
+                            android:layout_marginStart="@dimen/elements_margin"
+                            />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/incoming_request_review_textView"
+                            android:text="bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:layout_marginLeft="@dimen/elements_margin"
+                            android:layout_marginStart="@dimen/elements_margin"
+                            android:layout_marginRight="@dimen/elements_margin"
+                            android:layout_marginEnd="@dimen/elements_margin"
+                            android:layout_marginBottom="@dimen/elements_margin"
+
+                            />
 
 
                     </LinearLayout>
