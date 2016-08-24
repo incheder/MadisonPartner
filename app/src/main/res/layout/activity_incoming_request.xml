@@ -282,7 +282,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/incoming_request_review_textView"
-                            android:text="bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:layout_marginLeft="@dimen/elements_margin"
                             android:layout_marginStart="@dimen/elements_margin"
